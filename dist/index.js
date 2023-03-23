@@ -9,22 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { checkRfid } from "./db.js";
 import express from "express";
+import bp from "body-parser";
 const port = 8087;
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(bp.json());
+app.use(bp.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
     res.send("Basic door api");
 });
 app.post("/door", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const Rfid = req.body.rfid;
-    console.log(req.body);
-    console.info(Rfid);
     const check = yield checkRfid(Rfid);
     if (check) {
         res.send("Door open");
     }
-    res.send("Door closed");
+    else {
+        res.send("Door closed");
+    }
 }));
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

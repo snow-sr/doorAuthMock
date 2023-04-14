@@ -18,7 +18,7 @@ app.post("/door", async (req: express.Request, res) => {
   if (check) {
     res.send("Door open");
   } else {
-    res.send("Door closed");
+    res.status(401).send("Door closed");
   }
 });
 

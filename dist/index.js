@@ -24,7 +24,7 @@ app.post("/door", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.send("Door open");
     }
     else {
-        res.send("Door closed");
+        res.status(401).send("Door closed");
     }
 }));
 app.listen(port, () => {

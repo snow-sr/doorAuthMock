@@ -1,5 +1,5 @@
-import door from "./routes/door/door_functions";
-import user from "./routes/user/user_functions";
+import door from "./routes/door/door_functions.js";
+import user from "./routes/user/user_functions.js";
 import express from "express";
 import bp from "body-parser";
 const port: number = 8087;

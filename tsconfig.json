@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ES6", //ask
-    "module": "ES6", // commonjs or ES6?
-    "moduleResolution": "node",
-    "sourceMap": true,
+    "target": "ESNext",
+    "module": "NodeNext",
     "outDir": "./dist",
-    "esModuleInterop": true, // gonna ask if use it or nah
-    "skipLibCheck": true, // gonna ask if use it or nah
-    "forceConsistentCasingInFileNames": true 
+    "rootDir": "./src",
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "sourceMap": true,
+    "moduleResolution": "NodeNext"
   },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/*.ts"],
+  "exclude": ["node_modules"]
 }

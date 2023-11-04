@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 
-router.post("/users/", (req, res) => {
+router.post("/users/", ( res: express.Response) => {
     res.send("Users");
 })
 export default router;

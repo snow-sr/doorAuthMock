@@ -1,13 +1,9 @@
-//generate a simple but working tsconfig
 {
   "compilerOptions": {
-    "target": "ES6", //ask
-    "module": "ES6", // commonjs or ES6?
+    "target": "ES6", 
+    "module": "ES6", 
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "./dist",
-    "esModuleInterop": true, // gonna ask if use it or nah
-    "skipLibCheck": true, // gonna ask if use it or nah
-    "forceConsistentCasingInFileNames": true 
   },
 }

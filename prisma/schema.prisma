@@ -16,4 +16,14 @@ model rfidTag {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   lastTimeUsed DateTime
+  user         user?    @relation(fields: [userId], references: [id])
+  userId       Int?     @unique
+}
+
+model user {
+  id        Int      @id @unique @default(autoincrement())
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now())
+  rfid      rfidTag?
 }

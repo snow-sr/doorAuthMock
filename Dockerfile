@@ -10,14 +10,14 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Prisma generate
-RUN npx prisma generate
-
 # Copy the rest of the application code to the working directory
 COPY . .
 
 # Build the TypeScript code
 RUN npm run build
+
+# Run prisma generate
+RUN npx prisma generate
 
 # Expose the port that your Express application is listening on
 EXPOSE 8087

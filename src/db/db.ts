@@ -22,7 +22,7 @@ export async function createRfid(rfid: string) {
   const rfidTag = await prisma.rfidTag.create({
     data: {
       rfid: rfid,
-      lastTimeUsed: new Date(),
+      last_time_used: new Date(),
     },
   });
 
@@ -66,11 +66,9 @@ export async function listAllUser() {
 // }
 
 
-export async function createUser(name: string, email: string) {
+export async function createUser(id: number, email: string) {
   const user = await prisma.user.create({
     data: {
-      name: name,
-      email: email,
     },
   });
 
@@ -79,13 +77,13 @@ export async function createUser(name: string, email: string) {
   return user;
 }
 
-export async function assignRfidToUser(rfid: string, email: string) {
+export async function assignRfidToUser(rfid: string, id: number) {
   const user = await prisma.user.update({
     where: {
-      email: email,
+      id: id,
     },
     data: {
-      rfid: {
+      tags_owned: {
         connect: {
           rfid: rfid,
         },
@@ -100,7 +98,7 @@ export async function assignRfidToUser(rfid: string, email: string) {
     data: {
       user: {
         connect: {
-          email: email,
+          id: id,
         },
       },
     },

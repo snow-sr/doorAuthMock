@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import { checkRfid } from "../../db/db.js";
+import { checkRfid, createRfid } from "../../db/db.js";
 
 router.post("/", async (req: express.Request, res: express.Response) => {
     const Rfid: string = req.body.rfid;
@@ -12,4 +12,13 @@ router.post("/", async (req: express.Request, res: express.Response) => {
     }
 });
 
+router.post("/create", async (req: express.Request, res: express.Response) => {
+    const Rfid: string = req.body.rfid;
+    const check = await createRfid(Rfid);
+    if (check) {
+        res.send("Rfid created");
+    } else {
+        res.status(401).send("Rfid not created");
+    }
+});
 export default router;

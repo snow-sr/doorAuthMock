@@ -26,4 +26,89 @@ export function checkRfid(rfid) {
         }
     });
 }
+export function createRfid(rfid) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const rfidTag = yield prisma.rfidTag.create({
+            data: {
+                rfid: rfid,
+                lastTimeUsed: new Date(),
+            },
+        });
+        prisma.$disconnect();
+        return rfidTag;
+    });
+}
+export function deleteRfid(rfid) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const rfidTag = yield prisma.rfidTag.delete({
+            where: {
+                rfid: rfid,
+            },
+        });
+        prisma.$disconnect();
+        return rfidTag;
+    });
+}
+export function listAllRfids() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const rfids = yield prisma.rfidTag.findMany();
+        return rfids;
+    });
+}
+export function listAllUser() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const users = yield prisma.user.findMany();
+        prisma.$disconnect();
+        return users;
+    });
+}
+// model user {
+//   id        Int      @id @unique @default(autoincrement())
+//   name      String
+//   email     String   @unique
+//   createdAt DateTime @default(now())
+//   rfid      rfidTag?
+// }
+export function createUser(name, email) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const user = yield prisma.user.create({
+            data: {
+                name: name,
+                email: email,
+            },
+        });
+        prisma.$disconnect();
+        return user;
+    });
+}
+export function assignRfidToUser(rfid, email) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const user = yield prisma.user.update({
+            where: {
+                email: email,
+            },
+            data: {
+                rfid: {
+                    connect: {
+                        rfid: rfid,
+                    },
+                },
+            },
+        });
+        const rfidTag = yield prisma.rfidTag.update({
+            where: {
+                rfid: rfid,
+            },
+            data: {
+                user: {
+                    connect: {
+                        email: email,
+                    },
+                },
+            },
+        });
+        prisma.$disconnect();
+        return user;
+    });
+}
 //# sourceMappingURL=db.js.map

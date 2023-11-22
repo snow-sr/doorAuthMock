@@ -10,7 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// model user is just a connector for users microservice
 model user {
   id         Int       @id @default(autoincrement()) // Id is the id of the user at fabrica.auth
   tags_owned rfidTag[] // The keys owned by the user

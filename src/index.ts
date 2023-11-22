@@ -11,6 +11,10 @@ app.use(bp.urlencoded({ extended: true }));
 app.use(door);
 app.use(user);
 
+app.get("/", (req: express.Request, res: express.Response) => {
+  res.send("System working");
+})
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

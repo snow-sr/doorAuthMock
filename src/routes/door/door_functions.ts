@@ -12,6 +12,7 @@ router.post("/door", async (req: express.Request, res: express.Response) => {
   if (check) {
     lastRfid = Rfid;
     res.send("Door open");
+    updateFront();
     return;
   }
 

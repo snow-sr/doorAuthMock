@@ -2,11 +2,14 @@ import express from "express";
 const router = express.Router();
 import { checkRfid, listAllRfids, assignRfidToUser } from "../../db/db.js";
 
+export var lastRfid = "";
+
 router.post("/door", async (req: express.Request, res: express.Response) => {
   const Rfid: string = req.body.rfid;
   const check = await checkRfid(Rfid);
 
   if (check) {
+    lastRfid = Rfid;
     res.send("Door open");
     return;
   }
@@ -26,6 +29,10 @@ router.post("/door", async (req: express.Request, res: express.Response) => {
 router.get("/rfid", async (req: express.Request, res: express.Response) => {
   const rfids = await listAllRfids();
   res.send(rfids);
+});
+
+router.get("/last", async (req: express.Request, res: express.Response) => {
+  res.send(lastRfid);
 });
 
 router.post("/assign", async (req: express.Request, res: express.Response) => {

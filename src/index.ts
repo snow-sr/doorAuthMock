@@ -40,5 +40,5 @@ server.listen(port, () => {
 });
 
 export const updateFront = () => {
-  io.emit("updateFront");
+  io.emit("updateFront", true);
 };

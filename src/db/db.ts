@@ -8,15 +8,16 @@ export async function checkRfid(rfid: string) {
     },
   });
 
-  // update last time used
-  await prisma.rfidTag.update({
-    where: {
-      rfid: rfid,
-    },
-    data: {
-      last_time_used: new Date(),
-    },
-  });
+  if (Exists) {
+    await prisma.rfidTag.update({
+      where: {
+        rfid: rfid,
+      },
+      data: {
+        last_time_used: new Date(),
+      },
+    });
+  }
 
   if (Exists.valid) {
     prisma.$disconnect();

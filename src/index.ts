@@ -9,7 +9,13 @@ const app = express();
 
 app.use(bp.json());
 app.use(bp.urlencoded({ extended: true }));
-app.use(cors());
+// allow all origins
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 app.use(door);
 app.use(user);
 

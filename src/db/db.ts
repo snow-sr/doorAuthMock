@@ -110,6 +110,7 @@ export async function assignRfidToUser(rfid: string, id: number) {
       rfid: rfid,
     },
     data: {
+      valid: true,
       user: {
         connect: {
           id: id,

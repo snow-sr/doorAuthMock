@@ -9,7 +9,11 @@ import { createServer } from "node:http";
 const port: number = 8087;
 const app = express();
 const server = createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 app.use(bp.json());
 app.use(bp.urlencoded({ extended: true }));

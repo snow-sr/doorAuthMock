@@ -31,6 +31,8 @@ export async function checkRfid(rfid: string) {
       },
     });
 
+    console.log("Created new rfid");
+
     prisma.$disconnect();
     return false;
   }

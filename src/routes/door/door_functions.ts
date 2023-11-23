@@ -14,6 +14,8 @@ router.post("/door", async (req: express.Request, res: express.Response) => {
     res.send("Door open");
     return;
   }
+
+  updateFront();
   res.status(401).send("Door closed");
 });
 

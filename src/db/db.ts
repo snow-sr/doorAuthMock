@@ -19,12 +19,7 @@ export async function checkRfid(rfid: string) {
     });
   }
 
-  if (Exists.valid) {
-    prisma.$disconnect();
-
-    return true;
-  } else {
-    //create the rfid
+  if (!Exists) {
     await prisma.rfidTag.create({
       data: {
         rfid: rfid,
@@ -32,6 +27,15 @@ export async function checkRfid(rfid: string) {
     });
 
     console.log("Created new rfid");
+    return false;
+  }
+
+  if (Exists.valid) {
+    prisma.$disconnect();
+
+    return true;
+  } else {
+    //create the rfid
 
     prisma.$disconnect();
     return false;

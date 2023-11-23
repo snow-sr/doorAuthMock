@@ -3,9 +3,13 @@ import user from "./routes/user/user_functions.js";
 import express from "express";
 import cors from "cors";
 import bp from "body-parser";
-const port: number = 8087;
+import { Server } from "socket.io";
+import { createServer } from "node:http";
 
+const port: number = 8087;
 const app = express();
+const server = createServer(app);
+const io = new Server(createServer(server));
 
 app.use(bp.json());
 app.use(bp.urlencoded({ extended: true }));
@@ -19,6 +23,18 @@ app.get("/", (req: express.Request, res: express.Response) => {
   res.send("System working");
 });
 
+// socket
+io.on("connection", (socket) => {
+  console.log("a user connected");
+  socket.on("disconnect", () => {
+    console.log("user disconnected", socket.id);
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+export const updateFront = () => {
+  io.emit("updateFront");
+};

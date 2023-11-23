@@ -8,6 +8,7 @@ router.post("/door", async (req: express.Request, res: express.Response) => {
 
   if (check) {
     res.send("Door open");
+    return;
   }
   res.status(401).send("Door closed");
 });

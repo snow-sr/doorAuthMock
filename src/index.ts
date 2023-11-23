@@ -10,7 +10,6 @@ const app = express();
 app.use(bp.json());
 app.use(bp.urlencoded({ extended: true }));
 // allow all origins
-
 app.use(cors()); // Allow all origins
 app.use(door);
 app.use(user);

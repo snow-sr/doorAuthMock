@@ -13,11 +13,10 @@ app.use(cors());
 app.use(door);
 app.use(user);
 
-
 app.get("/", (req: express.Request, res: express.Response) => {
+  console.log(req.ip);
   res.send("System working");
-})
-
+});
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

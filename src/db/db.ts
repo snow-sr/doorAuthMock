@@ -123,3 +123,31 @@ export async function assignRfidToUser(rfid: string, id: number) {
 
   return user;
 }
+
+export async function isUserSynced(firebaseUserID: string, name: string) {
+  const user = await prisma.user.findUnique({
+    where: {
+      firebase_id: firebaseUserID,
+    },
+  });
+
+  if (user) {
+    return true;
+  } else {
+    console.log("Creating new user");
+
+    try {
+      await prisma.user.create({
+        data: {
+          firebase_id: firebaseUserID,
+          name: name,
+        },
+      });
+      console.log("User created");
+      return true;
+    } catch {
+      console.log("Error creating user");
+      return false;
+    }
+  }
+}

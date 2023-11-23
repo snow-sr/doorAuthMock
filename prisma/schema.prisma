@@ -11,8 +11,10 @@ datasource db {
 }
 
 model user {
-  id         Int       @id @default(autoincrement()) // Id is the id of the user at fabrica.auth
-  tags_owned rfidTag[] // The keys owned by the user
+  id          Int       @id @default(autoincrement()) // Id is the id of the user at fabrica.auth
+  firebase_id String
+  name        String
+  tags_owned  rfidTag[] // The keys owned by the user
 }
 
 model rfidTag {
@@ -20,7 +22,9 @@ model rfidTag {
   rfid           String   @unique
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
+  used_times     Int      @default(0)
   last_time_used DateTime
+  valid          Boolean
   user           user?    @relation(fields: [user_id], references: [id])
   user_id        Int?
 }

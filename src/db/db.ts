@@ -8,7 +8,17 @@ export async function checkRfid(rfid: string) {
     },
   });
 
-  if (Exists) {
+  // update last time used
+  await prisma.rfidTag.update({
+    where: {
+      rfid: rfid,
+    },
+    data: {
+      last_time_used: new Date(),
+    },
+  });
+
+  if (Exists.valid) {
     prisma.$disconnect();
 
     return true;
@@ -16,19 +26,6 @@ export async function checkRfid(rfid: string) {
     prisma.$disconnect();
     return false;
   }
-}
-
-export async function createRfid(rfid: string) {
-  const rfidTag = await prisma.rfidTag.create({
-    data: {
-      rfid: rfid,
-      last_time_used: new Date(),
-    },
-  });
-
-  prisma.$disconnect();
-
-  return rfidTag;
 }
 
 export async function deleteRfid(rfid: string) {
@@ -56,7 +53,6 @@ export async function listAllUser() {
   return users;
 }
 
-
 // model user {
 //   id        Int      @id @unique @default(autoincrement())
 //   name      String
@@ -65,10 +61,11 @@ export async function listAllUser() {
 //   rfid      rfidTag?
 // }
 
-
-export async function createUser(id: number, email: string) {
+export async function createUser(name: string, firebase_id: string) {
   const user = await prisma.user.create({
     data: {
+      firebase_id: firebase_id,
+      name: name,
     },
   });
 

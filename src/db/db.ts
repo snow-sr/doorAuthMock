@@ -17,27 +17,26 @@ export async function checkRfid(rfid: string) {
         last_time_used: new Date(),
       },
     });
+
+    prisma.$disconnect();
+
+    if (Exists.valid) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   if (!Exists) {
+    console.log("Creating new rfid");
     await prisma.rfidTag.create({
       data: {
         rfid: rfid,
       },
     });
 
-    console.log("Created new rfid");
-    return false;
-  }
+    console.log("Created");
 
-  if (Exists.valid) {
-    prisma.$disconnect();
-
-    return true;
-  } else {
-    //create the rfid
-
-    prisma.$disconnect();
     return false;
   }
 }

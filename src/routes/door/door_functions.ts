@@ -5,17 +5,11 @@ import { checkRfid, listAllRfids } from "../../db/db.js";
 router.post("/door", async (req: express.Request, res: express.Response) => {
   const Rfid: string = req.body.rfid;
   const check = await checkRfid(Rfid);
+
   if (check) {
     res.send("Door open");
-  } else {
-    if (check) {
-      console.log("Rfid created");
-    } else {
-      console.log("Rfid not created");
-      res.status(401).send("Rfid not created");
-    }
-    res.status(401).send("Door closed");
   }
+  res.status(401).send("Door closed");
 });
 
 // router.post("/create", async (req: express.Request, res: express.Response) => {

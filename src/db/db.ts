@@ -21,11 +21,15 @@ export async function checkRfid(rfid: string) {
     prisma.$disconnect();
 
     if (Exists.valid) {
+      console.log("destrancado");
       return true;
     } else {
+      console.log("trancado");
       return false;
     }
   }
+
+  console.log("ESSA PORRA EXISTE? ", Exists);
 
   if (!Exists) {
     console.log("Creating new rfid");

@@ -24,6 +24,13 @@ export async function checkRfid(rfid: string) {
 
     return true;
   } else {
+    //create the rfid
+    await prisma.rfidTag.create({
+      data: {
+        rfid: rfid,
+      },
+    });
+
     prisma.$disconnect();
     return false;
   }

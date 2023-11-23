@@ -18,13 +18,13 @@ model user {
 }
 
 model rfidTag {
-  id             Int      @id @default(autoincrement())
-  rfid           String   @unique
-  created_at     DateTime @default(now())
-  updated_at     DateTime @updatedAt
-  used_times     Int      @default(0)
-  last_time_used DateTime
-  valid          Boolean
-  user           user?    @relation(fields: [user_id], references: [id])
+  id             Int       @id @default(autoincrement())
+  rfid           String    @unique
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+  used_times     Int       @default(0)
+  last_time_used DateTime?
+  valid          Boolean   @default(false)
+  user           user?     @relation(fields: [user_id], references: [id])
   user_id        Int?
 }

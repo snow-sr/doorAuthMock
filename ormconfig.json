@@ -1,0 +1,11 @@
+{
+  "type": "postgres",
+  "host": "dokku-postgres-porta01",
+  "port": 5432,
+  "username": "postgres",
+  "password": "6eeeff36695c258f3885306f27f95475",
+  "database": "porta01",
+  "synchronize": true,
+  "logging": false,
+  "entities": ["src/entity/**/*.ts"]
+}

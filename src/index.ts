@@ -5,7 +5,7 @@ import cors from "cors";
 import bp from "body-parser";
 import { Server } from "socket.io";
 import { createServer } from "node:http";
-
+import { loginUser } from "./routes/user/user_authentication.js";
 const port: number = 8087;
 const app = express();
 const server = createServer(app);
@@ -14,6 +14,19 @@ const io = new Server(server, {
     origin: "*",
   },
 });
+
+app.post('/login', async (req: express.Request, res: express.Response)  => {
+  try {
+    const {email, password } = req.body
+    const { token } = await loginUser(email, password)
+    res.json({ token })
+
+  }
+  catch (error) {
+    res.status(400).json({error: error.message})
+
+  }
+})
 
 app.use(bp.json());
 app.use(bp.urlencoded({ extended: true }));

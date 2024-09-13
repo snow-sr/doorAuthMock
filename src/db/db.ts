@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import { error } from "node:console";
+import exp from "node:constants";
 const prisma = new PrismaClient();
 
 export async function checkRfid(rfid: string) {
@@ -82,19 +84,18 @@ export async function listAllUser() {
   }
 }
 
-export async function createUser(name: string, firebase_id: string) {
+export async function createUser(name:string, email:string, password:string) {
   try {
-    const user = await prisma.user.create({
-      data: {
-        firebase_id: firebase_id,
-        name: name,
-      },
+    return await prisma.user.create({
+      data: {name: name, email: email, password:password},
+
     });
 
-    return user;
-  } finally {
-    await prisma.$disconnect();
   }
+  catch (err) {
+    console.log(err);
+  }
+  
 }
 
 export async function assignRfidToUser(rfid: string, id: number) {
@@ -127,36 +128,6 @@ export async function assignRfidToUser(rfid: string, id: number) {
     });
 
     return user;
-  } finally {
-    await prisma.$disconnect();
-  }
-}
-
-export async function isUserSynced(firebaseUserID: string, name: string) {
-  try {
-    const user = await prisma.user.findUnique({
-      where: {
-        firebase_id: firebaseUserID,
-      },
-    });
-
-    if (user) {
-      return true;
-    } else {
-      console.log("Creating new user");
-
-      await prisma.user.create({
-        data: {
-          firebase_id: firebaseUserID,
-          name: name,
-        },
-      });
-      console.log("User created");
-      return true;
-    }
-  } catch {
-    console.log("Error creating user");
-    return false;
   } finally {
     await prisma.$disconnect();
   }

@@ -27,9 +27,8 @@ router.get("/users/", async (req, res) => {
 
 router.post("/sync/", async (req: express.Request, res: express.Response) => {
   const name: string = req.body.name;
-  const firebase_id: string = req.body.firebase_id;
 
-  await isUserSynced(firebase_id, name);
+  await isUserSynced(name);
 
   res.send(`${name} synced`);
 });

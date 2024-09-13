@@ -12,9 +12,10 @@ datasource db {
 
 model user {
   id          Int       @id @default(autoincrement()) // Id is the id of the user at fabrica.auth
-  firebase_id String    @unique // Firebase id is the id of the user at firebase
   name        String
   tags_owned  rfidTag[] // The keys owned by the user
+  password String 
+  email String @unique
 }
 
 model rfidTag {

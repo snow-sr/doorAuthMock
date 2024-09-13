@@ -1,12 +1,13 @@
 import express from "express";
-import { listAllUser, createUser, isUserSynced } from "../../db/db.js";
+import { listAllUser, createUser} from "../../db/db.js";
 const router = express.Router();
 
-router.post("/create/", (req: express.Request, res: express.Response) => {
+router.post("/create/", async (req: express.Request, res: express.Response) => {
   const name: string = req.body.name;
   const email: string = req.body.email;
+  const password: string = req.body.password;
 
-  createUser(name, email);
+  await createUser(name, email, password);
 
   res.send("User created");
 });
@@ -24,13 +25,5 @@ router.get("/users/", async (req, res) => {
 
 //   res.send(`${rfid} assigned to ${email}`);
 // });
-
-router.post("/sync/", async (req: express.Request, res: express.Response) => {
-  const name: string = req.body.name;
-
-  await isUserSynced(name);
-
-  res.send(`${name} synced`);
-});
 
 export default router;

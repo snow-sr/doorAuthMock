@@ -4,23 +4,25 @@ import { PrismaClient } from '@prisma/client';
 
 
 const prisma = new PrismaClient();
-const SECRET_KEY = 'your-secret-key';
+const SECRET_KEY = 'manoPotassio';
 
 export function generateToken(userId: number): string {
   return jwt.sign({ userId }, SECRET_KEY, { expiresIn: '1h' });
 }
 
-export async function registerUser(email: string, password: string) {
+export async function registerUser(email: string, password: string, name:string) {
   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await prisma.userLogin.create({
+  const user = await prisma.user.create({
     data: {
       email,
       password: hashedPassword,
+      name,
     },
   });
   return user;
-}export async function loginUser(email: string, password: string) {
-  const user = await prisma.userLogin.findUnique({ where: { email } });
+}
+export async function loginUser(email: string, password: string) {
+  const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
     throw new Error('Usuário não encontrado');
   }

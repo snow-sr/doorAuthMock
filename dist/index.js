@@ -1,11 +1,10 @@
 import door from "./routes/door/door_functions.js";
-import user from "./routes/user/user_functions.js";
 import express from "express";
 import cors from "cors";
-import bp from "body-parser";
 import { Server } from "socket.io";
 import { createServer } from "node:http";
 import { loginUser } from "./routes/user/user_authentication.js";
+import teste from "./routes/user/user_functions.js";
 const port = 8087;
 const app = express();
 const server = createServer(app);
@@ -14,22 +13,29 @@ const io = new Server(server, {
         origin: "*",
     },
 });
+app.use(express.json());
+app.use('/', teste);
 app.post('/login', async (req, res) => {
+    require;
     try {
-        const { email, password } = req.body;
+        console.log(req.body);
+        const email = req.body.email;
+        const password = req.body.password;
+        console.log(password);
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+        }
+        // Lógica de login vai aqui
         const { token } = await loginUser(email, password);
-        res.json({ token });
+        return res.status(200).json(token);
     }
     catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
-app.use(bp.json());
-app.use(bp.urlencoded({ extended: true }));
 // allow all origins
 app.use(cors()); // Allow all origins
 app.use(door);
-app.use(user);
 app.get("/", (req, res) => {
     console.log(req.ip);
     res.send("System working");
@@ -41,7 +47,7 @@ io.on("connection", (socket) => {
         console.log("user disconnected", socket.id);
     });
 });
-server.listen(port, () => {
+server.listen(3000, () => {
     console.log(`Server running on port ${port}`);
 });
 export const updateFront = () => {

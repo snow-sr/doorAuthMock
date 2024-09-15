@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser, registerUser, getAllUsers, getUserById } = require('./utils/auth');
+const { loginUser, registerUser, getAllUsers, getUserById, deleteUser, verifyUser } = require('./utils/auth');
 const { validateRequestBody } = require('../../../helpers/validate/request');
 
 const router = new express.Router();
@@ -39,6 +39,11 @@ router.post('/register', async (req, res) => {
 
 
 router.get('/users', async (req, res) => {
+    const token = req.headers.authorization;
+    const verify = verifyUser(token);
+    if(!verify.isSuper){
+        return res.status(403).json({ error: 'User is not super' });
+    }
     try {
         const users = await getAllUsers();
         res.status(200).json({data: users});

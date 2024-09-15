@@ -94,9 +94,37 @@ async function getAllUsers() {
         throw new Error('Error getting users');
     }
 }
+
+async function deleteUser(userId) {
+    try {
+        const user = await prisma.user.delete({ where: { id: userId } });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        return { user };
+    } catch (error) {
+        throw new Error('Error deleting user');
+    }
+}
+
+async function verifyUser(token){
+    try{
+        const user = await prisma.user.findUnique({ where: { token: token } });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        delete user.password, user.token, user.id;
+        return { user };
+    }
+    catch (error) {
+        throw new Error('Error getting user');
+    }
+}
 module.exports = {
     loginUser,
     registerUser,
     getUserById,
     getAllUsers,
+    deleteUser,
+    verifyUser
 };

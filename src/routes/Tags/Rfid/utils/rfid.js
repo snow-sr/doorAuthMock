@@ -13,9 +13,8 @@ async function validateRfid(rfid) {
         if (tag) {
             await prisma.rfidTag.update({
                 where: { rfid },
-                data: { last_time_used: new Date() },
+                data: { last_time_used: new Date(), used_times: { increment: 1 } },
             });
-
             if (tag.valid) {
                 logger.info('RFID is valid, unlocking door');
                 return true;

@@ -67,7 +67,36 @@ async function loginUser(email, password) {
     }
 }
 
+async function getUserById(userId) {
+    try {
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        delete user.password;
+        return { user };
+    } catch (error) {
+        throw new Error('Error getting user');
+    }
+}
+
+async function getAllUsers() {
+    try {
+        const users = await prisma.user.findMany();
+        if (!users) {
+            throw new Error('No users found');
+        }
+        users.forEach((user) => {
+            delete user.password;
+        });
+        return { users };
+    } catch (error) {
+        throw new Error('Error getting users');
+    }
+}
 module.exports = {
     loginUser,
     registerUser,
+    getUserById,
+    getAllUsers,
 };

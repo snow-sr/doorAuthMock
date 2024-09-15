@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser, registerUser } = require('./utils/auth');
+const { loginUser, registerUser, getAllUsers, getUserById } = require('./utils/auth');
 const { validateRequestBody } = require('../../../helpers/validate/request');
 
 const router = new express.Router();
@@ -36,5 +36,27 @@ router.post('/register', async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
+
+
+router.get('/users', async (req, res) => {
+    try {
+        const users = await getAllUsers();
+        res.status(200).json({data: users});
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+router.get('/users/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const user = await getUserById(Number(id));
+        res.status(200).json({data: user});
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 
 module.exports = router;

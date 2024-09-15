@@ -61,7 +61,7 @@ async function loginUser(email, password) {
         }
 
         const token = generateToken(user.id);
-        return { token };
+        return { token, user };
     } catch (error) {
         throw new Error('Error during login');
     }

@@ -13,6 +13,7 @@ model user {
   tags_owned  rfidTag[] @relation("UserTags")
   password    String
   email       String    @unique
+  isSuper     Boolean   @default(false)
 }
 
 model rfidTag {

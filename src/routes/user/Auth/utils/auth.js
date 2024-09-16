@@ -122,8 +122,10 @@ async function verifyUser(token){
         if (!user) {
             throw new Error('User not found');
         }
+        console.log(user)
         const isSuper = user.isSuper;
-        return { isSuper };
+        const isVerify = user.isVerified
+        return { isSuper, isVerify };
     }
     catch (error) {
         throw new Error('Error getting user');

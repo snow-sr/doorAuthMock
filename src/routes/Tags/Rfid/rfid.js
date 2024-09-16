@@ -5,13 +5,13 @@ const updateFront = require('../../../helpers/socket/update')
 
 const router = new express.Router();
 
-router.post('/door/:rfid', async (req, res) => {
-    const { rfid } = req.params;
-
+router.post('/door', async (req, res) => {
+    const data = req.body;
+    console.log(data)
     try {
-        const isValid = await validateRfid(rfid);
+        const isValid = await validateRfid(data.rfid);
+        console.log(isValid)
         if (isValid) {
-            updateFront()
             return res.status(200).json({ message: 'Door open' });
         }
         updateFront()

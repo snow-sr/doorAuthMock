@@ -9,11 +9,14 @@ datasource db {
 
 model user {
   id          Int       @id @default(autoincrement())
+  created_at  DateTime  @default(now())
+  updated_at  DateTime? @updatedAt
   name        String
   tags_owned  rfidTag[] @relation("UserTags")
   password    String
   email       String    @unique
   isSuper     Boolean   @default(false)
+  isVerified  Boolean   @default(false)
 }
 
 model rfidTag {

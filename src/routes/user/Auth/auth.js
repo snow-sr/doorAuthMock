@@ -36,12 +36,12 @@ router.post('/register', async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
-
+ 
 
 router.get('/users', async (req, res) => {
-    const token = req.headers.authorization;
-    const verify = verifyUser(token);
-    if(!verify.isSuper){
+    const token = req.headers.authorization.split(' ')[1];
+    const { isSuper } = await verifyUser(token);
+    if(!isSuper){
         return res.status(403).json({ error: 'User is not super' });
     }
     try {
@@ -53,8 +53,12 @@ router.get('/users', async (req, res) => {
 });
 
 router.get('/users/:id', async (req, res) => {
+    const token = req.headers.authorization.split(" ")[1];
+    const { isSuper } = await verifyUser(token);
+    if (!isSuper) {
+        return res.status(403).json({ error: "User is not super" });
+    }
     const { id } = req.params;
-
     try {
         const user = await getUserById(Number(id));
         res.status(200).json({data: user});
@@ -63,5 +67,29 @@ router.get('/users/:id', async (req, res) => {
     }
 });
 
+router.delete('/users/:id', async (req, res) => {
+    const token = req.headers.authorization.split(" ")[1];
+    const { isSuper } = await verifyUser(token);
+    if (!isSuper) {
+        return res.status(403).json({ error: "User is not super" });
+    }
+    const { id } = req.params;
+    try {
+        const user = await deleteUser(Number(id));
+        res.status(200).json({data: user});
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+router.get('/verify', async (req, res) => {
+    const token = req.headers.authorization.split(" ")[1];
+    try {
+        const { isSuper } = await verifyUser(token);
+        res.status(200).json({data: isSuper});
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
 
 module.exports = router;

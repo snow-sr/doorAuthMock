@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const { PrismaClient } = require('@prisma/client');
 const { generateToken } = require('./token');
 const validateEmail = require('../../../../helpers/validate/fields')
+const { verifyToken } = require('./token');
 
 const prisma = new PrismaClient();
 
@@ -61,6 +62,7 @@ async function loginUser(email, password) {
         }
 
         const token = generateToken(user.id);
+        await prisma.user.update({ where: { id: user.id }, data: { updated_at: new Date() } });
         return { token, user };
     } catch (error) {
         throw new Error('Error during login');
@@ -109,12 +111,19 @@ async function deleteUser(userId) {
 
 async function verifyUser(token){
     try{
-        const user = await prisma.user.findUnique({ where: { token: token } });
+        const data = verifyToken(token);
+        console.log(data)
+        if (!data) { 
+          throw new Error("User not found");
+        }
+        const user = await prisma.user.findUnique({
+          where: { id: data.userId },
+        });
         if (!user) {
             throw new Error('User not found');
         }
-        delete user.password, user.token, user.id;
-        return { user };
+        const isSuper = user.isSuper;
+        return { isSuper };
     }
     catch (error) {
         throw new Error('Error getting user');

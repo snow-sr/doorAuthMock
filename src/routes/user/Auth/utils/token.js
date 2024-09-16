@@ -1,9 +1,8 @@
 const jwt = require('jsonwebtoken');
 
 const SECRET_KEY = process.env.JWT_SECRET || 'defaultSecretKey';
-
 function verifyToken(token) {
-    try {
+  try {
       const decoded = jwt.verify(token, SECRET_KEY);
       return decoded;
     } catch (err) {
@@ -12,7 +11,7 @@ function verifyToken(token) {
   }
 
 const generateToken = ((userId) => {
-  return jwt.sign({ userId }, SECRET_KEY, { expiresIn: '1h' });
+  return jwt.sign({ userId }, SECRET_KEY, { expiresIn: '2h' }); 
 })
 
 module.exports = {

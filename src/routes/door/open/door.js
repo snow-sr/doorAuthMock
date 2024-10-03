@@ -1,6 +1,6 @@
 const express = require("express");
 const axios = require("axios");
-const verifyUser = require("../../User/Auth/utils/auth");
+const verifyUser = require("../../user/Auth/utils/auth");
 
 router = new express.Router();
 
@@ -9,7 +9,7 @@ router.get("/open", async (req, res) => {
     try{
         const { isVerify } = await verifyUser.verifyUser(req.headers.authorization.split(" ")[1]);
         if (!isVerify) {
-          throw new Error("User not authorized");
+          return new Error("User not authorized");
         }
         const response = await axios.get("http://191.52.56.177/open-door", { headers: { Authorization: "Bearer fabrica2420" } });
         console.log(response.data);

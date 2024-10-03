@@ -4,7 +4,7 @@ const { logger } = require('../../../../middlewares');
 
 async function validateRfid(rfid) {
     if (!rfid) {
-        throw new Error('RFID is required');
+        return new Error('RFID is required');
     }
 
     try {
@@ -31,7 +31,7 @@ async function validateRfid(rfid) {
         return false;
     } catch (error) {
         logger.error('Error validating RFID:', error);
-        throw new Error('Error validating RFID');
+        return new Error('Error validating RFID');
     } finally {
         await prisma.$disconnect();
     }
@@ -39,7 +39,7 @@ async function validateRfid(rfid) {
 
 async function removeRfid(rfid) {
     if (!rfid) {
-        throw new Error('RFID is required');
+        return new Error('RFID is required');
     }
 
     try {
@@ -48,7 +48,7 @@ async function removeRfid(rfid) {
         return removedRfid;
     } catch (error) {
         logger.error('Error removing RFID:', error);
-        throw new Error('Error removing RFID');
+        return new Error('Error removing RFID');
     } finally {
         await prisma.$disconnect();
     }
@@ -61,7 +61,7 @@ async function getAllRfids() {
         return rfids;
     } catch (error) {
         logger.error('Error retrieving RFIDs:', error);
-        throw new Error('Error retrieving RFIDs');
+        return new Error('Error retrieving RFIDs');
     } finally {
         await prisma.$disconnect();
     }
@@ -69,7 +69,7 @@ async function getAllRfids() {
 
 async function assignRfidToUser(rfid, userId) {
     if (!rfid || !userId) {
-        throw new Error('RFID and User ID are required');
+        return new Error('RFID and User ID are required');
     }
 
     try {
@@ -90,7 +90,7 @@ async function assignRfidToUser(rfid, userId) {
         return updatedUser;
     } catch (error) {
         logger.error('Error assigning RFID to user:', error);
-        throw new Error('Error assigning RFID to user');
+        return new Error('Error assigning RFID to user');
     } finally {
         await prisma.$disconnect();
     }

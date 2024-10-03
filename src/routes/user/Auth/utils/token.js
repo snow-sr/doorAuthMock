@@ -6,7 +6,7 @@ function verifyToken(token) {
       const decoded = jwt.verify(token, SECRET_KEY);
       return decoded;
     } catch (err) {
-      throw new Error('Token inválido');
+      return new Error('Token inválido');
     }
   }
 

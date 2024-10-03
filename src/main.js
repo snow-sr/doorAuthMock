@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { auth } = require('./routes/User');
+const { auth } = require('./routes/user');
 const { tags } = require('./routes/Tags');
 const { door } = require('./routes/door');
 

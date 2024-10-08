@@ -2,6 +2,7 @@ const express = require('express');
 const { validateRfid, getAllRfids, removeRfid, assignRfidToUser } = require('./utils/rfid');
 const { validateRequestBody } = require('../../../helpers/validate/fields');
 const updateFront = require('../../../helpers/socket/update')
+const verifyUser = require('../../user/Auth/utils/auth');
 
 const router = new express.Router();
 
@@ -41,7 +42,17 @@ router.post('/assign', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
+    const token = req.headers.authorization;
+    console.log(req)
+    console.log(token + 'token da a bynda')
+    if (!token) {
+      return res.status(400).json({ error: "Token not provided" });
+    }
     try {
+        const { isVerify } = verifyUser.verifyUser(token);
+        if (!isVerify) {
+          return new Error("User not authorized");
+        }
         const allRfids = await getAllRfids();
         res.status(200).json({ data: allRfids });
     } catch (error) {
@@ -65,8 +76,16 @@ router.post('/:rfid', async (req, res) => {
 
 router.delete('/delete/:rfid', async (req, res) => {
     const { rfid } = req.params;
-
+    let token = req.headers.authorization;
+    if (!token) {
+      return res.status(400).json({ error: "Token not provided" });
+    }
+    token = token.split(" ")[1];
     try {
+        const { isVerify } = verifyUser.verifyUser(token);
+        if (!isVerify) {
+          return new Error("User not authorized");
+        }
         const deletedRfid = await removeRfid(rfid);
         res.status(200).json({ message: 'RFID deleted successfully', data: deletedRfid });
     } catch (error) {

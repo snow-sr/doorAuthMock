@@ -5,14 +5,18 @@ const verifyUser = require("../../user/Auth/utils/auth");
 router = new express.Router();
 
 router.get("/open", async (req, res) => {
-    console.log(req.headers.authorization.split(" ")[1]);
+    let token = req.headers.authorization;
+    if (!token) {
+      return res.status(400).json({ error: "Token not provided" });
+    }
+    token = token.split(" ")[1];
     try{
-        const { isVerify } = await verifyUser.verifyUser(req.headers.authorization.split(" ")[1]);
+        const { isVerify } = await verifyUser.verifyUser(token);
         if (!isVerify) {
           return new Error("User not authorized");
         }
-        const response = await axios.get("http://191.52.56.177/open-door", { headers: { Authorization: "Bearer fabrica2420" } });
-        console.log(response.data);
+        await axios.get("http://191.52.56.56/open-door", { headers: { Authorization: "Bearer fabrica2420" } });
+        logger.info("Door oppened successfully");
         res.status(200).json({ message: "Door opened" });
     }
     catch(error){

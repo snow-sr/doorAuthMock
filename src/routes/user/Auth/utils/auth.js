@@ -109,27 +109,21 @@ async function deleteUser(userId) {
     }
 }
 
-async function verifyUser(token){
-    try{
-        const data = verifyToken(token);
-        console.log(data)
-        if (!data) { 
-          return new Error("User not found");
-        }
-        const user = await prisma.user.findUnique({
-          where: { id: data.userId },
-        });
-        if (!user) {
-            return new Error('User not found');
-        }
-        console.log(user)
-        const isSuper = user.isSuper;
-        const isVerify = user.isVerified
-        return { isSuper, isVerify };
+async function verifyUser(userData) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userData.userId },
+    });
+    if (!user) {
+      return new Error("User not found");
     }
-    catch (error) {
-        return new Error('Error getting user');
-    }
+    console.log(user);
+    const isSuper = user.isSuper;
+    const isVerify = user.isVerified;
+    return { isSuper, isVerify };
+  } catch (error) {
+    return new Error("Error getting user");
+  }
 }
 module.exports = {
     loginUser,

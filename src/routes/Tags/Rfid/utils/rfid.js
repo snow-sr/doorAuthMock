@@ -56,6 +56,7 @@ async function removeRfid(rfid) {
 
 async function getAllRfids() {
     try {
+        console.log('perto do banco')
         const rfids = await prisma.rfidTag.findMany();
         logger.info('Retrieved all RFIDs successfully');
         return rfids;

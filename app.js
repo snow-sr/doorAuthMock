@@ -48,12 +48,12 @@ app.use(cors());
 app.use(pinoHttp);
 app.use('/api', mainRouter);
 
-io.on("connection", (socket) => {
-  logger.info(`Socket connected: ${socket?.id}`);
-  socket.on("disconnect", () => {
-    console.log(`Socket disconnected: ${socket?.id}`);
-  });
-});
+// io.on("connection", (socket) => {
+//   logger.info(`Socket connected: ${socket?.id}`);
+//   socket.on("disconnect", () => {
+//     console.log(`Socket disconnected: ${socket?.id}`);
+//   });
+// });
 
 server.listen(PORT, async () => {
   logger.info(`Server online: http://localhost:${PORT}`);

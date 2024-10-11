@@ -31,6 +31,10 @@ router.post('/assign', async (req, res) => {
     }
 
     try {
+        const { isVerify, isSuper } = await verifyUser.verifyUser(req.user);
+        if (!isVerify || !isSuper) {
+          return res.status(403).json({ error: "User no have permision" });
+        }
         const isAssigned = await assignRfidToUser(rfid, userId);
         if (isAssigned) {
             return res.status(200).json({ message: 'RFID assigned to user successfully' });
@@ -42,18 +46,17 @@ router.post('/assign', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-    const token = req.headers.authorization;
-    console.log(req)
-    console.log(token + 'token da a bynda')
-    if (!token) {
-      return res.status(400).json({ error: "Token not provided" });
+    console.log(req.user, 'tags')
+    if (!req.user) {
+      return res.status(400).json({ error: "User not provided" });
     }
     try {
-        const { isVerify } = verifyUser.verifyUser(token);
+        const { isVerify} = await verifyUser.verifyUser(req.user);
         if (!isVerify) {
-          return new Error("User not authorized");
+          return res.status(403).json({ error: 'User no have permision' });
         }
         const allRfids = await getAllRfids();
+        console.log(allRfids)
         res.status(200).json({ data: allRfids });
     } catch (error) {
         res.status(500).json({ message: 'Internal Server Error', error: error.message });
@@ -64,6 +67,10 @@ router.post('/:rfid', async (req, res) => {
     const { rfid } = req.params;
 
     try {
+        const { isVerify, isSuper } = await verifyUser.verifyUser(req.user);
+        if (!isVerify || !isSuper) {
+          return res.status(403).json({ error: "User no have permision" });
+        }
         const isValid = await validateRfid(rfid);
         if (isValid) {
             return res.status(409).json({ message: 'RFID already exists' });
@@ -76,15 +83,10 @@ router.post('/:rfid', async (req, res) => {
 
 router.delete('/delete/:rfid', async (req, res) => {
     const { rfid } = req.params;
-    let token = req.headers.authorization;
-    if (!token) {
-      return res.status(400).json({ error: "Token not provided" });
-    }
-    token = token.split(" ")[1];
     try {
-        const { isVerify } = verifyUser.verifyUser(token);
-        if (!isVerify) {
-          return new Error("User not authorized");
+        const { isVerify, isSuper } = await verifyUser.verifyUser(req.user);
+        if (!isVerify || !isSuper) {
+          return res.status(403).json({ error: "User no have permision" });
         }
         const deletedRfid = await removeRfid(rfid);
         res.status(200).json({ message: 'RFID deleted successfully', data: deletedRfid });

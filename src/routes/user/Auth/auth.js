@@ -2,6 +2,7 @@ const express = require('express');
 const { loginUser, registerUser, getAllUsers, getUserById, deleteUser, verifyUser } = require('./utils/auth');
 const { validateRequestBody } = require('../../../helpers/validate/request');
 const { logger } = require('../../../middlewares');
+const { verifyToken } = require('./utils/token');
 
 const router = new express.Router();
 
@@ -99,9 +100,10 @@ router.delete('/users/:id', async (req, res) => {
 });
 
 router.get('/verify', async (req, res) => {
-    const token = req.headers.authorization.split(" ")[1];
+    const token = req.headers.authorization?.split(" ")[1];
     try {
-        const { isSuper } = await verifyUser(token);
+        const userData = verifyToken(token);
+        const { isSuper } = await verifyUser(userData);
         res.status(200).json({data: isSuper});
     } catch (error) {
         res.status(400).json({ error: error.message });

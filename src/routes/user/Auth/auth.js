@@ -47,12 +47,11 @@ router.post('/register', async (req, res) => {
  
 
 router.get('/users', async (req, res) => {
-    const token = req.headers.authorization.split(' ')[1];
-    const { isSuper } = await verifyUser(token);
-    if(!isSuper){
-        return res.status(403).json({ error: 'User is not super' });
-    }
     try {
+        const { isVerify } = await verifyUser.verifyUser(req.user);
+        if (!isVerify) {
+          return res.status(403).json({ error: "User no have permision" });
+        }
         const users = await getAllUsers();
         res.status(200).json({data: users});
     } catch (error) {
@@ -64,13 +63,12 @@ router.get('/users', async (req, res) => {
 });
 
 router.get('/users/:id', async (req, res) => {
-    const token = req.headers.authorization.split(" ")[1];
-    const { isSuper } = await verifyUser(token);
-    if (!isSuper) {
-        return res.status(403).json({ error: "User is not super" });
-    }
     const { id } = req.params;
     try {
+        const { isVerify } = await verifyUser.verifyUser(req.user);
+        if (!isVerify) {
+          return res.status(403).json({ error: "User no have permision" });
+        }
         const user = await getUserById(Number(id));
         res.status(200).json({data: user});
     } catch (error) {
@@ -82,13 +80,12 @@ router.get('/users/:id', async (req, res) => {
 });
 
 router.delete('/users/:id', async (req, res) => {
-    const token = req.headers.authorization.split(" ")[1];
-    const { isSuper } = await verifyUser(token);
-    if (!isSuper) {
-        return res.status(403).json({ error: "User is not super" });
-    }
     const { id } = req.params;
     try {
+        const { isVerify, isSuper } = await verifyUser.verifyUser(req.user);
+        if (!isVerify || !isSuper) {
+          return res.status(403).json({ error: "User no have permision" });
+        }
         const user = await deleteUser(Number(id));
         res.status(200).json({data: user});
     } catch (error) {

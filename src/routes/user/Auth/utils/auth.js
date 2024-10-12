@@ -153,5 +153,6 @@ module.exports = {
     getUserById,
     getAllUsers,
     deleteUser,
-    verifyUser
+    verifyUser,
+    forgetPassword,
 };

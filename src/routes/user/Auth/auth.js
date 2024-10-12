@@ -48,7 +48,7 @@ router.post('/register', async (req, res) => {
 
 router.get('/users', async (req, res) => {
     try {
-        const { isVerify } = await verifyUser.verifyUser(req.user);
+        const { isVerify } = await verifyUser(req.user);
         if (!isVerify) {
           return res.status(403).json({ error: "User no have permision" });
         }

@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const { PrismaClient } = require('@prisma/client');
 const { generateToken } = require('./token');
 const validateEmail = require('../../../../helpers/validate/fields')
-const { verifyToken } = require('./token');
+// const { verifyToken } = require('./token');
 
 const prisma = new PrismaClient();
 
@@ -69,46 +69,6 @@ async function loginUser(email, password) {
     }
 }
 
-async function getUserById(userId) {
-    try {
-        const user = await prisma.user.findUnique({ where: { id: userId } });
-        if (!user) {
-            return new Error('User not found');
-        }
-        delete user.password;
-        return { user };
-    } catch (error) {
-        return new Error('Error getting user');
-    }
-}
-
-async function getAllUsers() {
-    try {
-        const users = await prisma.user.findMany();
-        if (!users) {
-            return new Error('No users found');
-        }
-        users.forEach((user) => {
-            delete user.password;
-        });
-        return { users };
-    } catch (error) {
-        return new Error('Error getting users');
-    }
-}
-
-async function deleteUser(userId) {
-    try {
-        const user = await prisma.user.delete({ where: { id: userId } });
-        if (!user) {
-            return new Error('User not found');
-        }
-        return { user };
-    } catch (error) {
-        return new Error('Error deleting user');
-    }
-}
-
 async function verifyUser(userData) {
   try {
     const user = await prisma.user.findUnique({
@@ -126,33 +86,9 @@ async function verifyUser(userData) {
   }
 }
 
-async function forgetPassword(email) {
-    if (!email) {
-        return new Error('Email is required');
-    }
 
-    if (!validateEmail(email)) {
-        return new Error('Invalid email format');
-    }
-
-    try {
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) {
-            return new Error('User not found');
-        }
-
-        const token = generateToken(user.id);
-        return { token };
-    } catch (error) {
-        return new Error('Error getting user');
-    }
-}
 module.exports = {
     loginUser,
     registerUser,
-    getUserById,
-    getAllUsers,
-    deleteUser,
     verifyUser,
-    forgetPassword,
 };

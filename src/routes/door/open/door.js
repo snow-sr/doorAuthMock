@@ -1,6 +1,6 @@
 const express = require("express");
 const axios = require("axios");
-const verifyUser = require("../../user/Auth/utils/auth");
+const verifyUser = require("../../Auth/Auth/utils/auth");
 const logger = require("../../../middlewares/logger/logger");
 
 router = new express.Router();

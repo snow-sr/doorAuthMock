@@ -2,7 +2,7 @@ const express = require('express');
 const { validateRfid, getAllRfids, removeRfid, assignRfidToUser } = require('./utils/rfid');
 const { validateRequestBody } = require('../../../helpers/validate/fields');
 const updateFront = require('../../../helpers/socket/update')
-const verifyUser = require('../../user/Auth/utils/auth');
+const verifyUser = require('../../Auth/Auth/utils/auth');
 
 const router = new express.Router();
 

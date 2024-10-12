@@ -28,7 +28,7 @@ const nodemailer = require("nodemailer");
 //   });
 // }
 
-async function emailForgetPassword(message, recipientList) {
+async function emailForgetPassword(password, recipientList) {
   try {
     if (typeof recipientList === "string") {
       recipientList = JSON.parse(recipientList);
@@ -46,10 +46,27 @@ async function emailForgetPassword(message, recipientList) {
       from: process.env.EMAIL_HOST_USER,
       to: recipientList,
       subject: "Forget Password",
-      text:
-        "Your new password is " +
-        message +
-        "\nPlease change it as soon as possible",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #f0f0f0; border-radius: 10px;">
+          <h2 style="color: #333;">Password Recovery</h2>
+          <p>Hello,</p>
+          <p>You requested to reset your password. Here is your new temporary password:</p>
+          
+          <div style="text-align: center; margin: 20px 0;">
+            <input type="text" value="${password}" id="passwordInput" readonly 
+                   style="padding: 10px; font-size: 18px; border: 1px solid #ccc; border-radius: 5px; width: 80%; text-align: center;">
+          </div>
+
+          <div style="text-align: center; margin: 20px 0;">
+            <a href="#" onclick="navigator.clipboard.writeText('${password}'); alert('Password copied to clipboard!');" 
+               style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
+              Copy Password
+            </a>
+          </div>
+
+          <p style="color: #999;">Please, make sure to change your password after logging in for security reasons.</p>
+        </div>
+      `,
     };
 
     // Usar await para enviar email de forma assíncrona

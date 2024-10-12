@@ -47,7 +47,7 @@ router.delete("/users/:id", async (req, res) => {
         if (!isVerify || !isSuper) {
         return res.status(403).json({ error: "User no have permision" });
         }
-        const user = await deleteUser(id);
+        const user = await deleteUser(Number(id));
         res.status(200).json({ data: user });
     } catch (error) {
         console.log(error)

@@ -36,7 +36,6 @@ async function getAllUsers() {
 
 async function deleteUser(userId) {
   try {
-    console.log('resposta do delete de usuario: ', await prisma.user.findUnique({ where: { id: userId } }))
     const userExist = await prisma.user.findUnique({ where: { id: userId } });
     if (!userExist) {
       throw new Error("User not found");

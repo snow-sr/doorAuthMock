@@ -1,5 +1,11 @@
 const express = require('express');
-const { validateRfid, getAllRfids, removeRfid, assignRfidToUser } = require('./utils/rfid');
+const {
+  validateRfid,
+  getAllRfids,
+  removeRfid,
+  assignRfidToUser,
+  permissionRfid,
+} = require("./utils/rfid");
 const { validateRequestBody } = require('../../../helpers/validate/fields');
 const updateFront = require('../../../helpers/socket/update')
 const verifyUser = require('../../Auth/Auth/utils/auth');
@@ -32,7 +38,7 @@ router.post('/assign', async (req, res) => {
         if (!isVerify || !isSuper) {
           return res.status(403).json({ error: "User no have permision" });
         }
-        const isAssigned = await assignRfidToUser(rfid, userId);
+        const isAssigned = await assignRfidToUser(rfid, Number(userId));
         if (isAssigned) {
             return res.status(200).json({ message: 'RFID assigned to user successfully' });
         }
@@ -85,6 +91,23 @@ router.delete('/delete/:rfid', async (req, res) => {
         }
         const deletedRfid = await removeRfid(rfid);
         res.status(200).json({ message: 'RFID deleted successfully', data: deletedRfid });
+    } catch (error) {
+        res.status(500).json({ message: 'Internal Server Error', error: error.message });
+    }
+});
+
+router.put('/update', async (req, res) => {
+    const data = req.body;
+    try {
+        const { isVerify, isSuper } = await verifyUser.verifyUser(req.user);
+        if (!isVerify || !isSuper) {
+          return res.status(403).json({ error: "User no have permission" });
+        }
+        const updatedRfid = await permissionRfid(
+          data.rfid,
+          Boolean(data.valid)
+        );
+        res.status(200).json({ message: 'RFID updated successfully', data: updatedRfid });
     } catch (error) {
         res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }

@@ -3,11 +3,11 @@ const jwt = require('jsonwebtoken');
 const SECRET_KEY = process.env.JWT_SECRET || 'defaultSecretKey';
 function verifyToken(token) {
   try {
-      const decoded = jwt.verify(token, SECRET_KEY);
-      return decoded;
-    } catch (err) {
-      return new Error('Token inválido');
-    }
+    const decoded = jwt.verify(token, SECRET_KEY);
+    return decoded;
+  } catch (error) {
+    return { error: error.message };
+  }
   }
 
 const generateToken = ((userId) => {

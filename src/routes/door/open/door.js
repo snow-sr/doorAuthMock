@@ -12,7 +12,6 @@ router.get("/open", async (req, res) => {
           return res.status(403).json({ error: "User no have permision" });
         }
         await axios.get("http://191.52.56.56/open-door", { headers: { Authorization: "Bearer fabrica2420" } });
-        logger.info("Door oppened successfully");
         res.status(200).json({ message: "Door opened" });
     }
     catch(error){
@@ -31,7 +30,6 @@ router.get("/logs", async (req, res) => {
         Authorization: "Bearer fabrica2420",
       },
     });
-    logger.info("Logs retrieved successfully");
     res.status(200).json({ data: logs.data });
   } catch (error) {
     res.status(400).json({ error: error.message });

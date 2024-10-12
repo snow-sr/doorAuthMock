@@ -26,9 +26,6 @@ router.post('/login', async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-    finally{
-        logger.info('User logged in successfully');
-    }
 });
 
 router.post('/register', async (req, res) => {
@@ -45,9 +42,6 @@ router.post('/register', async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-    finally{
-        logger.info('User registered successfully');
-    }
 });
 
 router.get('/verify', async (req, res) => {
@@ -59,9 +53,6 @@ router.get('/verify', async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-    finally{
-        logger.info('User verified successfully');
-    }
 });
 
 router.post('/forget', async (req, res) => {
@@ -71,9 +62,6 @@ router.post('/forget', async (req, res) => {
         res.status(200).json({data: user});
     } catch (error) {
         res.status(400).json({ error: error.message });
-    }
-    finally{
-        logger.info('User email forgot password successfully');
     }
 }
 )

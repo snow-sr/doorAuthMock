@@ -65,7 +65,6 @@ async function emailForgetPassword(password, recipientList) {
       `,
     };
 
-    // Usar await para enviar email de forma assíncrona
     const info = await transporter.sendMail(mailOptions);
 
     console.log("Email enviado: " + info.response);

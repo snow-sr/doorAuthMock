@@ -1,73 +1,94 @@
-const bcrypt = require('bcrypt');
-const { PrismaClient } = require('@prisma/client');
-const { generateToken, generatePasswordResetToken } = require('./token');
-const validateEmail = require('../../../../helpers/validate/fields')
-const {emailForgetPassword} = require("../../../../helpers/mail/mail");
-// const { verifyToken } = require('./token');
+const bcrypt = require("bcrypt");
+const { PrismaClient } = require("@prisma/client");
+const { generateToken, generatePasswordResetToken } = require("./token");
+const validateEmail = require("../../../../helpers/validate/fields");
+const { emailForgetPassword } = require("../../../../helpers/mail/mail");
 
 const prisma = new PrismaClient();
 
+// Custom Error Classes
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ValidationError";
+  }
+}
+
+class AuthError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "AuthError";
+  }
+}
+
 async function registerUser(email, password, name) {
-    if (!email || !password || !name) {
-        return new Error('All fields are required');
-    }
+  if (!email || !password || !name) {
+    throw new ValidationError("All fields are required");
+  }
 
-    if (!validateEmail(email)) {
-        return new Error('Invalid email format');
-    }
+  if (!validateEmail(email)) {
+    throw new ValidationError("Invalid email format");
+  }
 
-    if (password.length < 6) {
-        return new Error('Password must be at least 6 characters long');
-    }
+  if (password.length < 6) {
+    throw new ValidationError("Password must be at least 6 characters long");
+  }
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) {
-        return new Error('Email is already in use');
-    }
+  const existingUser = await prisma.user.findUnique({ where: { email } });
+  if (existingUser) {
+    throw new ValidationError("Email is already in use");
+  }
 
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(password, salt);
+  const salt = await bcrypt.genSalt(12);
+  const hashedPassword = await bcrypt.hash(password, salt);
 
-    try {
-        const user = await prisma.user.create({
-            data: {
-                email,
-                password: hashedPassword,
-                name,
-            },
-        });
-        return user;
-    } catch (error) {
-        return new Error('Error creating user');
-    }
+  try {
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name,
+      },
+    });
+    return user;
+  } catch (error) {
+    throw new Error(`Registration failed: ${error.message}`);
+  } finally {
+    await prisma.$disconnect();
+  }
 }
 
 async function loginUser(email, password) {
-    if (!email || !password) {
-        return new Error('Email and password are required');
+  if (!email || !password) {
+    throw new ValidationError("Email and password are required");
+  }
+
+  if (!validateEmail(email)) {
+    throw new ValidationError("Invalid email format");
+  }
+
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      throw new AuthError("User not found");
     }
 
-    if (!validateEmail(email)) {
-        return new Error('Invalid email format');
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw new AuthError("Incorrect password");
     }
 
-    try {
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) {
-            return new Error('User not found');
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return new Error('Incorrect password');
-        }
-
-        const token = generateToken(user.id);
-        await prisma.user.update({ where: { id: user.id }, data: { updated_at: new Date() } });
-        return { token, user };
-    } catch (error) {
-        return new Error('Error during login');
-    }
+    const token = generateToken(user.id);
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { updated_at: new Date() },
+    });
+    return { token, user };
+  } catch (error) {
+    throw new Error(`Login failed: ${error.message}`);
+  } finally {
+    await prisma.$disconnect();
+  }
 }
 
 async function verifyUser(userData) {
@@ -76,42 +97,47 @@ async function verifyUser(userData) {
       where: { id: userData.userId },
     });
     if (!user) {
-      return new Error("User not found");
+      throw new AuthError("User not found");
     }
     const isSuper = user.isSuper;
     const isVerify = user.isVerified;
     return { isSuper, isVerify };
   } catch (error) {
-    return new Error("Error getting user");
+    throw new Error(`Verification failed: ${error.message}`);
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
 async function forgetPassword(email) {
   if (!email) {
-    throw new Error("Email is required");
+    throw new ValidationError("Email is required");
   }
 
   if (!validateEmail(email)) {
-    throw new Error("Invalid email format");
+    throw new ValidationError("Invalid email format");
   }
 
   try {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      throw new Error("User not found");
+      throw new AuthError("User not found");
     }
     const token = generatePasswordResetToken(user.id);
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(token, salt);
+
     const update = await prisma.user.update({
       where: { id: user.id },
       data: { password: hashedPassword },
     });
 
     const mail = await emailForgetPassword(token, [email]);
-    return { mail };
+    return { mail, update };
   } catch (error) {
-    throw new Error("Error getting usersss: "+  error);
+    throw new Error(`Password reset failed: ${error.message}`);
+  } finally {
+    await prisma.$disconnect();
   }
 }
 

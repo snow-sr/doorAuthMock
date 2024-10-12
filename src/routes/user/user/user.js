@@ -14,13 +14,9 @@ router.get("/users", async (req, res) => {
         const users = await getAllUsers();
         res.status(200).json({ data: users });
     } catch (error) {
-        console.log(error)
         res.status(400).json({ error: error.message });
     }
-    finally {
-        logger.info("Users retourned successfully");
-    }
-    });
+});
 
 router.get("/users/:id", async (req, res) => {
     const { id } = req.params;
@@ -32,13 +28,9 @@ router.get("/users/:id", async (req, res) => {
         const user = await getUserById(Number(id));
         res.status(200).json({ data: user });
     } catch (error) {
-        console.log(error)
         res.status(400).json({ error: error.message });
     }
-    finally {
-        logger.info("User by id retourned successfully");
-    }
-    });
+});
 
 router.delete("/users/:id", async (req, res) => {
     const { id } = req.params;
@@ -50,11 +42,7 @@ router.delete("/users/:id", async (req, res) => {
         const user = await deleteUser(Number(id));
         res.status(200).json({ data: user });
     } catch (error) {
-        console.log(error)
         res.status(400).json({ error: error.message });
-    }
-    finally {
-        logger.info("User deleted successfully");
     }
 });
 
@@ -69,11 +57,7 @@ router.put("/users/:id", async (req, res) => {
         const user = await updateUser(id, { name, email, isVerify, isSuper });
         res.status(200).json({ data: user });
     } catch (error) {
-        console.log(error)
         res.status(400).json({ error: error.message });
-    }
-    finally {
-        logger.info("User updated successfully");
     }
 });
 

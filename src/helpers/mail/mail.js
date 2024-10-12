@@ -53,16 +53,12 @@ async function emailForgetPassword(password, recipientList) {
           <p>You requested to reset your password. Here is your new temporary password:</p>
           
           <div style="text-align: center; margin: 20px 0;">
-            <input type="text" value="${password}" id="passwordInput" readonly 
-                   style="padding: 10px; font-size: 18px; border: 1px solid #ccc; border-radius: 5px; width: 80%; text-align: center;">
+            <input type="text" value="${password}" readonly 
+                   style="padding: 10px; font-size: 18px; border: 1px solid #ccc; border-radius: 5px; width: 80%; text-align: center; cursor: pointer;" 
+                   onclick="this.select(); document.execCommand('copy');">
           </div>
 
-          <div style="text-align: center; margin: 20px 0;">
-            <a href="#" onclick="navigator.clipboard.writeText('${password}'); alert('Password copied to clipboard!');" 
-               style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
-              Copy Password
-            </a>
-          </div>
+          <p>Click the password above to select it, then use <strong>Ctrl + C</strong> (Windows) or <strong>Cmd + C</strong> (Mac) to copy it.</p>
 
           <p style="color: #999;">Please, make sure to change your password after logging in for security reasons.</p>
         </div>

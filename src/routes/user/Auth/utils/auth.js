@@ -125,6 +125,28 @@ async function verifyUser(userData) {
     return new Error("Error getting user");
   }
 }
+
+async function forgetPassword(email) {
+    if (!email) {
+        return new Error('Email is required');
+    }
+
+    if (!validateEmail(email)) {
+        return new Error('Invalid email format');
+    }
+
+    try {
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) {
+            return new Error('User not found');
+        }
+
+        const token = generateToken(user.id);
+        return { token };
+    } catch (error) {
+        return new Error('Error getting user');
+    }
+}
 module.exports = {
     loginUser,
     registerUser,

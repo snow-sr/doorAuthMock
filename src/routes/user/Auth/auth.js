@@ -110,4 +110,17 @@ router.get('/verify', async (req, res) => {
     }
 });
 
+router.post('/forget', async (req, res) => {
+    const { email } = req.body;
+    try {
+        const user = await forgetPassword(email);
+        res.status(200).json({data: user});
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+    finally{
+        logger.info('User forgot password successfully');
+    }
+});
+
 module.exports = router;

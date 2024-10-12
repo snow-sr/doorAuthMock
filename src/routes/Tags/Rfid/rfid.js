@@ -29,7 +29,6 @@ router.post('/assign', async (req, res) => {
     if (error) {
         return res.status(400).json({ error });
     }
-
     try {
         const { isVerify, isSuper } = await verifyUser.verifyUser(req.user);
         if (!isVerify || !isSuper) {

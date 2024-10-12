@@ -14,6 +14,7 @@ router.get("/users", async (req, res) => {
         const users = await getAllUsers();
         res.status(200).json({ data: users });
     } catch (error) {
+        console.log(error)
         res.status(400).json({ error: error.message });
     }
     finally {
@@ -31,6 +32,7 @@ router.get("/users/:id", async (req, res) => {
         const user = await getUserById(Number(id));
         res.status(200).json({ data: user });
     } catch (error) {
+        console.log(error)
         res.status(400).json({ error: error.message });
     }
     finally {
@@ -48,6 +50,7 @@ router.delete("/users/:id", async (req, res) => {
         const user = await deleteUser(id);
         res.status(200).json({ data: user });
     } catch (error) {
+        console.log(error)
         res.status(400).json({ error: error.message });
     }
     finally {

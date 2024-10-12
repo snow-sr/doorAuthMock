@@ -9,21 +9,21 @@ async function getUserById(userId) {
   try {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
-      return new Error("User not found");
+      throw new Error("User not found"); // Agora lança um erro quando o usuário não é encontrado
     }
-    console.log(user, ' saidgaufgvdyfgvuadfgvausyidgfvuAKDGUAYsdguAYDFGYTUWEFYUIWCGWUFYWUIFGWUIOFDGWUIFDGWUIYDFGWUEYIDFGUWIEEFDGUIASFGYUWFWYUEFGVUAWESFTASDUHGFHJAWGEHJDYGWEFUWTYFGDYUWSTFGHWTEFYHWTFWEYWGFV')
     delete user.password;
     return { user };
   } catch (error) {
-    return new Error("Error getting user");
+    return { error: error.message }; // Retorna a mensagem de erro
   }
 }
+
 
 async function getAllUsers() {
   try {
     const users = await prisma.user.findMany();
     if (!users) {
-      return new Error("No users found");
+      throw new Error("No users found");
     }
     users.forEach((user) => {
       delete user.password;
@@ -38,7 +38,7 @@ async function deleteUser(userId) {
   try {
     const user = await prisma.user.delete({ where: { id: userId } });
     if (!user) {
-      return new Error("User not found");
+      throw new Error("User not found");
     }
     return { user };
   } catch (error) {

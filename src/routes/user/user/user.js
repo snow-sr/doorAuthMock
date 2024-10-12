@@ -17,7 +17,7 @@ router.get("/users", async (req, res) => {
         res.status(400).json({ error: error.message });
     }
     finally {
-        logger.info("User logged in successfully");
+        logger.info("Users retourned successfully");
     }
     });
 
@@ -28,13 +28,13 @@ router.get("/users/:id", async (req, res) => {
         if (!isVerify) {
         return res.status(403).json({ error: "User no have permision" });
         }
-        const user = await getUserById(id);
+        const user = await getUserById(Number(id));
         res.status(200).json({ data: user });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
     finally {
-        logger.info("User logged in successfully");
+        logger.info("User by id retourned successfully");
     }
     });
 
@@ -51,7 +51,7 @@ router.delete("/users/:id", async (req, res) => {
         res.status(400).json({ error: error.message });
     }
     finally {
-        logger.info("User logged in successfully");
+        logger.info("User deleted successfully");
     }
 });
 

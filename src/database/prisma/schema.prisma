@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id         Int       @id @default(autoincrement())
+  name       String
+  email      String    @unique
+  password   String
+  isSuper    Boolean   @default(false)
+  created_at DateTime  @default(now())
+  updated_at DateTime? @updatedAt
+  isVerified Boolean   @default(false)
+  tags_owned rfidTag[] @relation("UserTags")
+}
+
+model rfidTag {
+  id             Int      @id @default(autoincrement())
+  rfid           String   @unique
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  used_times     Int      @default(0)
+  last_time_used DateTime @default(now())
+  valid          Boolean  @default(false)
+  user_id        Int?
+  user           user?    @relation("UserTags", fields: [user_id], references: [id])
+}

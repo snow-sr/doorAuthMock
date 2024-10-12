@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt');
 const { PrismaClient } = require('@prisma/client');
-const { generateToken } = require('./token');
+const { generateToken, generatePasswordResetToken } = require('./token');
 const validateEmail = require('../../../../helpers/validate/fields')
-const emailForgetPassword = require("../../../../helpers/mail/mail");
+const {emailForgetPassword} = require("../../../../helpers/mail/mail");
 // const { verifyToken } = require('./token');
 
 const prisma = new PrismaClient();
@@ -89,29 +89,32 @@ async function verifyUser(userData) {
 
 async function forgetPassword(email) {
   if (!email) {
-    return new Error("Email is required");
+    throw new Error("Email is required");
   }
 
   if (!validateEmail(email)) {
-    return new Error("Invalid email format");
+    throw new Error("Invalid email format");
   }
 
   try {
     const user = await prisma.user.findUnique({ where: { email } });
+    console.log(user)
     if (!user) {
-      return new Error("User not found");
+      throw new Error("User not found");
     }
     const token = generatePasswordResetToken(user.id);
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(token, salt);
-    await prisma.user.update({
+    console.log(user)
+    const update = await prisma.user.update({
       where: { id: user.id },
       data: { password: hashedPassword },
     });
-    const email = emailForgetPassword(email, token);
-    return { token };
+    console.log(update)
+    const mail = await emailForgetPassword(email, token);
+    return { mail };
   } catch (error) {
-    return new Error("Error getting user");
+    throw new Error("Error getting usersss: "+  error);
   }
 }
 

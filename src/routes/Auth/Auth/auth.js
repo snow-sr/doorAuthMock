@@ -1,5 +1,10 @@
 const express = require('express');
-const { loginUser, registerUser, getAllUsers, getUserById, deleteUser, verifyUser } = require('./utils/auth');
+const {
+  loginUser,
+  registerUser,
+  verifyUser,
+  forgetPassword,
+} = require("./utils/auth");
 const { validateRequestBody } = require('../../../helpers/validate/request');
 const { logger } = require('../../../middlewares');
 const { verifyToken } = require('./utils/token');
@@ -68,8 +73,9 @@ router.post('/forget', async (req, res) => {
         res.status(400).json({ error: error.message });
     }
     finally{
-        logger.info('User forgot password successfully');
+        logger.info('User email forgot password successfully');
     }
-});
+}
+)
 
 module.exports = router;

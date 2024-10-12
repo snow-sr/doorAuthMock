@@ -14,7 +14,12 @@ const generateToken = ((userId) => {
   return jwt.sign({ userId }, SECRET_KEY, { expiresIn: '2h' }); 
 })
 
+const generatePasswordResetToken = ((userId) => {
+  return jwt.sign({ userId }, SECRET_KEY, { expiresIn: '1h' }); 
+})
+
 module.exports = {
-    verifyToken,
-    generateToken
-}
+  verifyToken,
+  generateToken,
+  generatePasswordResetToken
+};

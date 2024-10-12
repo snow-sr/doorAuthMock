@@ -60,13 +60,13 @@ router.delete("/users/:id", async (req, res) => {
 
 router.put("/users/:id", async (req, res) => {
     const { id } = req.params;
-    const { name, email } = req.body;
+    const { name, email, isVerify, isSuper } = req.body;
     try {
-        const { isVerify, isSuper } = await verifyUser(req.user);
-        if (!isVerify || !isSuper) {
+        const data = await verifyUser(req.user);
+        if (!data.isVerify || !data.isSuper) {
         return res.status(403).json({ error: "User no have permision" });
         }
-        const user = await updateUser(id, { name, email });
+        const user = await updateUser(id, { name, email, isVerify, isSuper });
         res.status(200).json({ data: user });
     } catch (error) {
         console.log(error)

@@ -28,7 +28,7 @@ const nodemailer = require("nodemailer");
 //   });
 // }
 
-function forgetPassword(message, recipientList) {
+function emailForgetPassword(message, recipientList) {
   if (typeof recipientList === "string") {
     recipientList = JSON.parse(recipientList);
   }
@@ -55,4 +55,4 @@ function forgetPassword(message, recipientList) {
   });
 }
 
-module.exports = { sendWelcomeEmail };
+module.exports = { emailForgetPassword };

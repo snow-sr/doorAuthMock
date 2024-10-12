@@ -12,9 +12,7 @@ const verifyToken = (req, res, next) => {
 
   try {
     const verified = jwt.verify(token, "defaultSecretKey"); // Verifica o token usando a chave secreta
-    console.log(verified)
     req.user = verified; // Se válido, adiciona o payload do token no req.user
-    console.log('entrou nessa poraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
     next(); // Prossegue para a próxima função/middleware
   } catch (err) {
     res.status(400).json({ message: "Token inválido." });

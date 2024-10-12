@@ -78,7 +78,6 @@ async function verifyUser(userData) {
     if (!user) {
       return new Error("User not found");
     }
-    console.log(user);
     const isSuper = user.isSuper;
     const isVerify = user.isVerified;
     return { isSuper, isVerify };
@@ -98,20 +97,18 @@ async function forgetPassword(email) {
 
   try {
     const user = await prisma.user.findUnique({ where: { email } });
-    console.log(user)
     if (!user) {
       throw new Error("User not found");
     }
     const token = generatePasswordResetToken(user.id);
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(token, salt);
-    console.log(user)
     const update = await prisma.user.update({
       where: { id: user.id },
       data: { password: hashedPassword },
     });
-    console.log(update)
-    const mail = await emailForgetPassword(email, token);
+
+    const mail = await emailForgetPassword(token, [email]);
     return { mail };
   } catch (error) {
     throw new Error("Error getting usersss: "+  error);

@@ -15,7 +15,8 @@ const generateToken = ((userId) => {
 })
 
 const generatePasswordResetToken = ((userId) => {
-  return jwt.sign({ userId }, SECRET_KEY, { expiresIn: '1h' }); 
+  const token = (jwt.sign({ userId }, SECRET_KEY, { expiresIn: "1h" })).slice(0, 10); 
+  return token
 })
 
 module.exports = {

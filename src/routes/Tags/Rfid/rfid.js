@@ -8,10 +8,8 @@ const router = new express.Router();
 
 router.post('/door', async (req, res) => {
     const data = req.body;
-    console.log(data)
     try {
         const isValid = await validateRfid(data.rfid);
-        console.log(isValid)
         if (isValid) {
             return res.status(200).json({ message: 'Door open' });
         }
@@ -45,7 +43,6 @@ router.post('/assign', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-    console.log(req.user, 'tags')
     if (!req.user) {
       return res.status(400).json({ error: "User not provided" });
     }
@@ -55,7 +52,6 @@ router.get('/', async (req, res) => {
           return res.status(403).json({ error: 'User no have permision' });
         }
         const allRfids = await getAllRfids();
-        console.log(allRfids)
         res.status(200).json({ data: allRfids });
     } catch (error) {
         res.status(500).json({ message: 'Internal Server Error', error: error.message });

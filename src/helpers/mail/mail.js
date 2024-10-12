@@ -29,11 +29,11 @@ const nodemailer = require("nodemailer");
 // }
 
 async function emailForgetPassword(message, recipientList) {
-  try{
-
+  try {
     if (typeof recipientList === "string") {
       recipientList = JSON.parse(recipientList);
     }
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -41,25 +41,27 @@ async function emailForgetPassword(message, recipientList) {
         pass: process.env.EMAIL_HOST_PASSWORD,
       },
     });
-  
+
     const mailOptions = {
       from: process.env.EMAIL_HOST_USER,
       to: recipientList,
-      subject: 'Forget Password',
-      text: 'Your new passwors is ' + message + '/n Please change it as soon as possible',
+      subject: "Forget Password",
+      text:
+        "Your new password is " +
+        message +
+        "\nPlease change it as soon as possible",
     };
-    transporter.sendMail(mailOptions,async function (error, info) {
-      if (error) {
-        console.log("Erro ao enviar email:", error);
-      } else {
-        console.log("Email enviado: " + info.response);
-      }
-    });
-  }
-  catch(error){
-    console.log('Erro ao enviar email' + error)
-    return error
+
+    // Usar await para enviar email de forma assíncrona
+    const info = await transporter.sendMail(mailOptions);
+
+    console.log("Email enviado: " + info.response);
+    return { success: true, response: info.response }; // Retorna sucesso e informação do email enviado
+  } catch (error) {
+    console.log("Erro ao enviar email:", error);
+    return { success: false, error: error.message }; // Retorna o erro
   }
 }
+
 
 module.exports = { emailForgetPassword };

@@ -46,8 +46,24 @@ async function deleteUser(userId) {
   }
 }
 
+async function updateUser(userId, data) {
+  try {
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: data,
+    });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return { user };
+  } catch (error) {
+    return new Error("Error updating user");
+  }
+}
+
 module.exports = {
   getUserById,
   getAllUsers,
   deleteUser,
+  updateUser,
 };

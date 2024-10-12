@@ -1,5 +1,5 @@
 const express = require("express");
-const { getAllUsers, getUserById, deleteUser} = require("./utils/user");
+const { getAllUsers, getUserById, deleteUser, updateUser} = require("./utils/user");
 const { logger } = require("../../../middlewares");
 const { verifyUser } = require("../../Auth/Auth/utils/auth");
 
@@ -55,6 +55,25 @@ router.delete("/users/:id", async (req, res) => {
     }
     finally {
         logger.info("User deleted successfully");
+    }
+});
+
+router.put("/users/:id", async (req, res) => {
+    const { id } = req.params;
+    const { name, email } = req.body;
+    try {
+        const { isVerify, isSuper } = await verifyUser(req.user);
+        if (!isVerify || !isSuper) {
+        return res.status(403).json({ error: "User no have permision" });
+        }
+        const user = await updateUser(id, { name, email });
+        res.status(200).json({ data: user });
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({ error: error.message });
+    }
+    finally {
+        logger.info("User updated successfully");
     }
 });
 

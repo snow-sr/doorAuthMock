@@ -77,9 +77,10 @@ async function deleteUser(userId) {
 }
 
 async function updateUser(userId, data) {
-  if (!userId) {
-    throw new ValidationError("User ID is required");
-  }
+  console.log(userId + " IID CADASDAKSMDASKDMASLDALSDMLASM");
+  // if (!userId) {
+  //   throw new ValidationError("User ID is required" + userId);
+  // }
 
   try {
     const user = await prisma.user.update({

@@ -54,7 +54,7 @@ router.put("/users/:id", async (req, res) => {
         if (!data.isVerify || !data.isSuper) {
         return res.status(403).json({ error: "User no have permision" });
         }
-        const user = await updateUser(id, { name, email, isVerify, isSuper });
+        const user = await updateUser(Number(id), { name, email, isVerify, isSuper });
         res.status(200).json({ data: user });
     } catch (error) {
         res.status(400).json({ error: error.message });

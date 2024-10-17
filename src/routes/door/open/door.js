@@ -25,7 +25,7 @@ router.get("/logs", async (req, res) => {
     if (!isVerify) {
       return res.status(403).json({ error: "User no have permision" });
     }
-    const logs = await axios.get("http:///191.52.56.56:8087/logs", {
+    const logs = await axios.get("http://191.52.56.56:8087/logs", {
       headers: {
         Authorization: "Bearer fabrica2420",
       },

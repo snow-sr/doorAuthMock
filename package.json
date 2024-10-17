@@ -27,5 +27,8 @@
     "pino-http": "^10.3.0",
     "pino-pretty": "^11.2.2",
     "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "prisma": "^5.19.1"
   }
 }

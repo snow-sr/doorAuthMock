@@ -17,6 +17,8 @@ model user {
   updated_at DateTime? @updatedAt
   isVerified Boolean   @default(false)
   tags_owned rfidTag[] @relation("UserTags")
+
+  logs logs[]
 }
 
 model rfidTag {
@@ -29,4 +31,15 @@ model rfidTag {
   valid          Boolean  @default(false)
   user_id        Int?
   user           user?    @relation("UserTags", fields: [user_id], references: [id])
+
+  logs logs[]
+}
+
+model logs {
+  id         Int      @id @default(autoincrement())
+  date      DateTime @default(now()) @db.Timestamptz(3)
+  user_id    Int
+  user       user     @relation(fields: [user_id], references: [id])
+  rfid_id    Int
+  rfid       rfidTag  @relation(fields: [rfid_id], references: [id])
 }

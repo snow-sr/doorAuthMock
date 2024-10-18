@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { logger } = require("../../../../middlewares");
+const { dateFormat } = require("../../../../helpers/date/date");
 
 // Custom Error Classes
 class ValidationError extends Error {
@@ -51,13 +52,13 @@ async function validateRfid(rfid) {
   }
 }
 
-async function removeRfid(rfid) {
-  if (!rfid) {
+async function removeRfid(id) {
+  if (!id) {
     throw new ValidationError("RFID is required");
   }
 
   try {
-    const removedRfid = await prisma.rfidTag.delete({ where: { rfid } });
+    const removedRfid = await prisma.rfidTag.delete({ where: { id: id } });
     logger.info("RFID removed successfully");
     return removedRfid;
   } catch (error) {
@@ -69,7 +70,17 @@ async function removeRfid(rfid) {
 
 async function getAllRfids() {
   try {
-    const rfids = await prisma.rfidTag.findMany();
+    const rfids = await prisma.rfidTag.findMany({
+      include: { user: true },
+    });
+    rfids.forEach((rfid) => {
+      rfid.created_at = dateFormat(rfid.created_at);
+      rfid.last_time_used = dateFormat(rfid.last_time_used);
+      rfid.updated_at = dateFormat(rfid.updated_at);
+      if (rfid?.user){
+        delete rfid.user.password;
+      }
+    });
     logger.info("Retrieved all RFIDs successfully");
     return rfids;
   } catch (error) {
@@ -107,15 +118,45 @@ async function assignRfidToUser(rfid, userId) {
   }
 }
 
-async function permissionRfid(rfid, permission) {
-  if (!rfid || permission === undefined) {
+async function desAssignRfidToUser(rfid, userId) {
+  if (!rfid || !userId) {
+    throw new ValidationError("RFID and User ID are required");
+  }
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { tags_owned: { disconnect: { rfid } } },
+    });
+
+    await prisma.rfidTag.update({
+      where: { rfid },
+      data: {
+        valid: false,
+        user: { disconnect: { id: userId } },
+      },
+    });
+
+    logger.info("RFID desassigned to user successfully");
+    return updatedUser;
+  } catch (error) {
+    throw new Error(`Failed to desassign RFID: ${error.message}`);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+async function permissionRfid(rfid) {
+  if (!rfid === undefined) {
     throw new ValidationError("RFID and valid are required");
   }
 
   try {
+    console.log(rfid + ' dsadadAfgfuifWGFWFHEWQF')
+    const tag = await prisma.rfidTag.findUnique({ where: { id: rfid } });
     const updatedRfid = await prisma.rfidTag.update({
-      where: { rfid },
-      data: { valid: permission },
+      where: { id: rfid },
+      data: { valid: !tag.valid },
     });
 
     logger.info("RFID permission updated successfully");
@@ -133,4 +174,5 @@ module.exports = {
   getAllRfids,
   assignRfidToUser,
   permissionRfid,
+  desAssignRfidToUser,
 };

@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const { dateFormat } = require("../../../../helpers/date/date");
 
 // Custom Error Classes
 class NotFoundError extends Error {
@@ -31,6 +32,8 @@ async function getUserById(userId) {
     if (!user) {
       throw new NotFoundError("User not found");
     }
+    user.created_at = dateFormat(user.created_at);
+    user.updated_at = dateFormat(user.updated_at);
     delete user.password;
     return { user };
   } catch (error) {
@@ -47,6 +50,8 @@ async function getAllUsers() {
       throw new NotFoundError("No users found");
     }
     users.forEach((user) => {
+      user.created_at = dateFormat(user.created_at);
+      user.updated_at = dateFormat(user.updated_at);
       delete user.password;
     });
     return { users };

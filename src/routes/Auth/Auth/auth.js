@@ -66,4 +66,9 @@ router.post('/forget', async (req, res) => {
 }
 )
 
+// router.get('/test', async (req, res) => {
+//     const data = await verifyUser({ userId: 1 });
+//     res.status(200).json({ message: 'Auth route working', data: data });
+// });
+
 module.exports = router;

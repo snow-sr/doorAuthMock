@@ -8,15 +8,15 @@ datasource db {
 }
 
 model user {
-  id         Int       @id @default(autoincrement())
+  id         Int          @id @default(autoincrement())
   name       String
-  email      String    @unique
+  email      String       @unique
   password   String
-  isSuper    Boolean   @default(false)
-  created_at DateTime  @default(now())
-  updated_at DateTime? @updatedAt
-  isVerified Boolean   @default(false)
-  tags_owned rfidTag[] @relation("UserTags")
+  isSuper    Boolean      @default(false)
+  created_at DateTime     @default(now())
+  updated_at DateTime?    @updatedAt
+  isVerified Boolean      @default(false)
+  tags_owned rfidTag[]    @relation("UserTags")
 
   logs logs[]
 }
@@ -36,10 +36,12 @@ model rfidTag {
 }
 
 model logs {
-  id         Int      @id @default(autoincrement())
-  date      DateTime @default(now()) @db.Timestamptz(3)
-  user_id    Int
-  user       user     @relation(fields: [user_id], references: [id])
-  rfid_id    Int
-  rfid       rfidTag  @relation(fields: [rfid_id], references: [id])
+  id         Int          @id @default(autoincrement())
+  type       String   
+  message    String
+  date      DateTime      @default(now()) @db.Timestamptz(3)
+  user_id    Int?
+  user       user?        @relation(fields: [user_id], references: [id])
+  rfid_id    Int?
+  rfid       rfidTag?     @relation(fields: [rfid_id], references: [id])
 }

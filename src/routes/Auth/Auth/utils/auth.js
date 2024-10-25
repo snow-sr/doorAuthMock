@@ -100,7 +100,6 @@ async function verifyUser(userData) {
     // Recuperar o usuário do cache (sem await, pois é uma operação síncrona)
     const cachedUser = cache.get(cacheKey);
     if (cachedUser) {
-      console.log(cachedUser + "dsadsadadadadsdasd"); // Para depuração
       return cachedUser;
     }
 

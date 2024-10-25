@@ -1,9 +1,8 @@
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
-const { Server } = require('socket.io')
-const { createServer } = require('node:http')
-
+const { Server } = require("socket.io");
+const { createServer } = require("node:http");
 const { logger } = require('./src/middlewares');
 const pinoHttp = require('pino-http')({logger});
 const { PORT } = require('./src/config');
@@ -20,10 +19,11 @@ const io = new Server(server, {
   },
 });
 
+
 app.use(express.json())
 app.use(
-    helmet({
-      contentSecurityPolicy: {
+  helmet({
+    contentSecurityPolicy: {
         directives: {
           defaultSrc: ['self'],
           scriptSrc: ['self'],
@@ -48,12 +48,18 @@ app.use(cors());
 app.use(pinoHttp);
 app.use('/api', mainRouter);
 
-// io.on("connection", (socket) => {
-//   logger.info(`Socket connected: ${socket?.id}`);
-//   socket.on("disconnect", () => {
-//     console.log(`Socket disconnected: ${socket?.id}`);
-//   });
-// });
+app.use('/', (req, res) => {
+  res.redirect('/api');
+});
+
+io.on("connection", (socket) => {
+  logger.info(`Socket connected: ${socket?.id}`);
+  socket.on("disconnect", () => {
+    console.log(`Socket disconnected: ${socket?.id}`);
+   });
+ });
+ 
+exports.io = io;
 
 server.listen(PORT, async () => {
   logger.info(`Server online: http://localhost:${PORT}`);

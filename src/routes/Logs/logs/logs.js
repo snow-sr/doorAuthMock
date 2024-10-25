@@ -16,18 +16,17 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    const log = await prisma.logs.create({
-      data: {
-        type,
-        message,
-      },
-    });
+     const log = await prisma.logs.create({
+       data: {
+         type,
+         message,
+   },
+     });
 
-    if (!log) {
-      return res.status(400).json({ error: "Error creating log" });
-    }
+     if (!log) {
+       return res.status(400).json({ error: "Error creating log" });
+     }
 
-    res.status(200);
   } catch (error) {
     res.status(400).json({ error: error.message });
   } finally {
@@ -39,6 +38,7 @@ router.post("/", async (req, res) => {
     io.io.emit("logs", { data: logs });
     await prisma.$disconnect();
     logger.info("Logs update");
+    return res.status(200).json();
   }
 });
 

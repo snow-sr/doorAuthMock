@@ -6,7 +6,7 @@ const {
   forgetPassword,
 } = require("./utils/auth");
 const { validateRequestBody } = require('../../../helpers/validate/request');
-const { logger } = require('../../../middlewares');
+const {  } = require('../../../middlewares');
 const { verifyToken } = require('./utils/token');
 
 const router = new express.Router();

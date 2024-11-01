@@ -2,6 +2,8 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { logger } = require("../../../../middlewares");
 const { dateFormat } = require("../../../../helpers/date/date");
+const NodeCache = require("node-cache");
+const cache = new NodeCache({ stdTTL: 864000, checkperiod: 320 }); 
 
 // Custom Error Classes
 class ValidationError extends Error {
@@ -24,33 +26,54 @@ async function validateRfid(rfid) {
   }
 
   try {
-    const tag = await prisma.rfidTag.findUnique({ where: { rfid } });
+    const cacheKey = `tag_rfid`;
+ 
+    const cachedTags = cache.get(cacheKey);
+    console.log(cache.keys())
+    console.log(cachedTags)
+   if (cachedTags) {
+     const cachedTag = cachedTags.find((tag) => tag.rfid === rfid);
+     if (cachedTag) {
+       console.log("passou");
+       return cachedTag.valid;
+     }
+   }
 
-    if (tag) {
-      await prisma.rfidTag.update({
-        where: { rfid },
-        data: { last_time_used: new Date(), used_times: { increment: 1 } },
-      });
-      if (tag.valid) {
-        logger.info("RFID is valid, unlocking door");
-        return true;
-      } else {
-        logger.info("RFID is invalid, door remains locked");
-        return false;
-      }
+    const tags = await prisma.rfidTag.findMany();
+
+    if(!tags){
+      throw new NotFoundError("RFIDS not found");
     }
 
-    logger.warn("RFID not found, creating a new one");
-    await prisma.rfidTag.create({ data: { rfid } });
-    logger.info("New RFID created");
+    const tagsToCache = tags
 
-    return false;
+    cache.set(cacheKey, tagsToCache);
+
+    const tag = tags.find((tag) => tag.rfid === rfid);
+    return tag.valid;
   } catch (error) {
-    throw new Error(`Validation failed: ${error.message}`);
+    return new Error(`Validation failed: ${error.message}`);
   } finally {
     await prisma.$disconnect();
   }
 }
+
+async function createRfid(rfid) {
+  if (!rfid) {
+    throw new ValidationError("RFID is required");
+  }
+
+  try {
+    const newRfid = await prisma.rfidTag.create({ data: { rfid } });
+    logger.info("RFID created successfully");
+    return newRfid;
+  } catch (error) {
+    throw new Error(`Creation failed: ${error.message}`);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+  
 
 async function removeRfid(id) {
   if (!id) {
@@ -175,4 +198,5 @@ module.exports = {
   assignRfidToUser,
   permissionRfid,
   desAssignRfidToUser,
+  createRfid,
 };

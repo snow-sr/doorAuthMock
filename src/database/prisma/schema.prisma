@@ -45,3 +45,10 @@ model logs {
   rfid_id    Int?
   rfid       rfidTag?     @relation(fields: [rfid_id], references: [id])
 }
+
+model ip {
+  id         Int          @id @default(autoincrement())
+  ip         String       @unique
+  created_at DateTime     @default(now())
+  updated_at DateTime?    @updatedAt
+}

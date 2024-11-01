@@ -8,9 +8,11 @@ const { tags } = require("./routes/Tags");
 const { door } = require("./routes/door");
 const { user } = require("./routes/user");
 const { logs } = require("./routes/Logs");
+const { health } = require("./routes/health");
 
 app.use("/auth", auth);
 app.use("/logs", logs);
+app.use("/health", health);
 
 app.use("/tags", verifyToken, tags);
 app.use("/door", verifyToken, door);

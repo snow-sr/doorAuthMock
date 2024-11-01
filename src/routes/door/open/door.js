@@ -2,6 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const verifyUser = require("../../Auth/Auth/utils/auth");
 const logger = require("../../../middlewares/logger/logger");
+const { DOOR_KEY } = require("../../../config");
 
 
 
@@ -11,9 +12,9 @@ router.get("/open", async (req, res) => {
     try{
         const { isVerify } = await verifyUser.verifyUser(req.user);
         if (!isVerify) {
-          return res.status(403).json({ error: "User no have permision" });
+          res.status(403).json({ error: "User no have permision" });
         }
-        await axios.get("http://191.52.56.56/open-door", { headers: { Authorization: "Bearer fabrica2420" } });
+        await axios.get("http://191.52.57.200:19003/open-door", { headers: { Authorization: "Bearer " + DOOR_KEY } });
         res.status(200).json({ message: "Door opened" });
     }
     catch(error){
@@ -23,5 +24,14 @@ router.get("/open", async (req, res) => {
         logger.info("Door opened");
     }
 });
+
+router.post("/alive", async (req, res ) => {
+    try{
+        console.log("imalive da porta aaaaaaaaaaaaa  \n", JSON.stringify(req))
+    }
+    catch(error){
+        res.status(500).json()
+    }
+})
 
 module.exports = router;

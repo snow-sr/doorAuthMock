@@ -10,7 +10,7 @@ router = new express.Router();
 router.post("/", async (req, res) => {
   console.log("Recebendo requisição para criar log...");
   const { type, message } = req.body;
-
+  let logdps; 
   if (!type || !message) {
     return res.status(400).json({ error: "type and message are required" });
   }
@@ -26,19 +26,14 @@ router.post("/", async (req, res) => {
      if (!log) {
        return res.status(400).json({ error: "Error creating log" });
      }
+     logdps = log
 
+     res.status(200).json({ message: "Log created" });
   } catch (error) {
     res.status(400).json({ error: error.message });
   } finally {
-    const logs = await prisma.logs.findMany();
-    logs.forEach((log) => {
-      log.date = dateFormat(log.date);
-    });
-    console.log("Logs sent to socket", io);
-    io.io.emit("logs", { data: logs });
     await prisma.$disconnect();
-    logger.info("Logs update");
-    return res.status(200).json();
+    io.io.emit("logs", { data: logdps });
   }
 });
 

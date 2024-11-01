@@ -119,7 +119,6 @@ async function verifyUser(userData) {
     // Armazenar os dados no cache
     cache.set(cacheKey, userToCache);
 
-    console.log(userToCache + 'user'); // Para depuração
     return userToCache;
   } catch (error) {
     throw new Error(`Verification failed: ${error.message}`);

@@ -20,15 +20,15 @@ router.post("/", async (req, res) => {
        data: {
          type,
          message,
-   },
+        },
      });
 
      if (!log) {
        return res.status(400).json({ error: "Error creating log" });
      }
-     logdps = log
-
      res.status(200).json({ message: "Log created" });
+     
+     logdps = log
   } catch (error) {
     res.status(400).json({ error: error.message });
   } finally {

@@ -31,9 +31,14 @@ async function checkIp(ip){
         throw new ValidationError("Ip is required");
     }
     try{
-        prisma.ip.update({
-            where: {id: 1},
-            data: {ip: ip}
+        await prisma.ip.update({
+            where: {
+              id: 1
+            },
+            data: {
+              ip: ip,
+              updated_at: new Date()
+            }
         });
     }
     catch(error){

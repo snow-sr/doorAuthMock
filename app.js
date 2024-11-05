@@ -21,28 +21,28 @@ const io = new Server(server, {
 
 
 app.use(express.json())
-// app.use(
-//   helmet({
-//     contentSecurityPolicy: {
-//         directives: {
-//           defaultSrc: ['self'],
-//           scriptSrc: ['self'],
-//           styleSrc: ['self'],
-//           objectSrc: ['none'],
-//           upgradeInsecureRequests: [],
-//         },
-//       },
-//       dnsPrefetchControl: {allow: false},
-//       expectCt: {enforce: true},
-//       frameguard: {action: 'deny'},
-//       hidePoweredBy: {setTo: 'PHP 4.2.0'},
-//       hsts: {maxAge: 5184000, preload: true},
-//       ieNoOpen: {setTo: 'false'},
-//       noSniff: true,
-//       referrerPolicy: {policy: 'strict-origin-when-cross-origin'},
-//       xssFilter: true,
-//     }),
-// );
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ['self'],
+          scriptSrc: ['self'],
+          styleSrc: ['self'],
+          objectSrc: ['none'],
+          upgradeInsecureRequests: [],
+        },
+      },
+      dnsPrefetchControl: {allow: false},
+      expectCt: {enforce: true},
+      frameguard: {action: 'deny'},
+      hidePoweredBy: {setTo: 'PHP 4.2.0'},
+      hsts: {maxAge: 5184000, preload: true},
+      ieNoOpen: {setTo: 'false'},
+      noSniff: true,
+      referrerPolicy: {policy: 'strict-origin-when-cross-origin'},
+      xssFilter: true,
+    }),
+);
 
 app.use(cors());
 app.use(pinoHttp);

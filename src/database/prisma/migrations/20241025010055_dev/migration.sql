@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "logs" ALTER COLUMN "message" DROP DEFAULT,
+ALTER COLUMN "type" DROP DEFAULT;

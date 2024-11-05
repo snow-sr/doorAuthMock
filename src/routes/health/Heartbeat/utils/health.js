@@ -44,7 +44,30 @@ async function checkIp(ip){
     catch(error){
         console.error(error);
         throw new HealthError(`Ip check failed: ${error.message}`);
+  }
+}
+
+async function getIp(req){
+    try{
+      const cacheKey = `ip_${req.user.id}`;
+      const cachedIp = cache.get(cacheKey);
+
+      if (cachedIp) {
+          return cachedIp.ip;
+        }
+      const ip = await prisma.ip.findFirst();
+
+      if (!ip) {
+        throw new HealthError("Ip not found");
+      }
+      const userToCache = { ip };
+      cache.set(cacheKey, userToCache);
+      return userToCache.ip;
+    }
+    catch(error){
+        console.error(error);
+        throw new HealthError(`Ip check failed: ${error.message}`);
     }
 }
 
-module.exports = { checkHealth, checkIp };
+module.exports = { checkHealth, checkIp, getIp };

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
-const SECRET_KEY = process.env.JWT_SECRET || 'defaultSecretKey';
+const { SECRET_KEY } = require("../../../../config");
+
 function verifyToken(token) {
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
@@ -11,11 +12,11 @@ function verifyToken(token) {
   }
 
 const generateToken = ((userId) => {
-  return jwt.sign({ userId }, SECRET_KEY, { expiresIn: '2h' }); 
+  return jwt.sign({ userId }, SECRET_KEY, { expiresIn: '3h' }); 
 })
 
 const generatePasswordResetToken = ((userId) => {
-  const token = (jwt.sign({ userId }, SECRET_KEY, { expiresIn: "1h" })).slice(0, 10); 
+  const token = (jwt.sign({ userId }, SECRET_KEY, { expiresIn: "5m" })).slice(0, 10); 
   return token
 })
 

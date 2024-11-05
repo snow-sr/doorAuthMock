@@ -3,6 +3,7 @@ const axios = require("axios");
 const verifyUser = require("../../Auth/Auth/utils/auth");
 const logger = require("../../../middlewares/logger/logger");
 const { DOOR_KEY } = require("../../../config");
+const { getIp } = require("../../health/Heartbeat/utils/health");
 
 
 
@@ -10,11 +11,15 @@ router = new express.Router();
 
 router.get("/open", async (req, res) => {
     try{
+        const ip = getIp();
         const { isVerify } = await verifyUser.verifyUser(req.user);
         if (!isVerify) {
           res.status(403).json({ error: "User no have permision" });
         }
-        await axios.get("http://191.52.57.200:19003/open-door", { headers: { Authorization: "Bearer " + DOOR_KEY } });
+        else if (!ip) {
+          res.status(500).json({ error: "Ip not found" });
+        }
+        await axios.get(ip + ":19003/open-door", { headers: { Authorization: "Bearer " + DOOR_KEY } });
         res.status(200).json({ message: "Door opened" });
     }
     catch(error){

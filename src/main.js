@@ -1,5 +1,6 @@
 const express = require("express");
 const verifyToken = require("./middlewares/auth/auth");
+const RateLimit = require("express-rate-limit");
 
 const app = express();
 
@@ -10,13 +11,19 @@ const { user } = require("./routes/user");
 const { logs } = require("./routes/Logs");
 const { health } = require("./routes/health");
 
+// set up rate limiter: maximum of 100 requests per 15 minutes
+const limiter = RateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // max 100 requests per windowMs
+});
+
 app.use("/auth", auth);
 app.use("/logs", logs);
 app.use("/health", health);
 
-app.use("/tags", verifyToken, tags);
-app.use("/door", verifyToken, door);
-app.use("/user", verifyToken, user);
+app.use("/tags", limiter, verifyToken, tags);
+app.use("/door", limiter, verifyToken, door);
+app.use("/user", limiter, verifyToken, user);
 
 
 app.get("/", (req, res) => {

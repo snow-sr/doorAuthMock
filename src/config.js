@@ -20,5 +20,6 @@ module.exports = {
     DB_PASS,
     EMAIL_HOST_USER,
     EMAIL_HOST_PASSWORD,
-    DOOR_KEY
+    DOOR_KEY,
+    JWT_SECRET
   };

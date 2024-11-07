@@ -12,8 +12,6 @@ const verifyToken = (req, res, next) => {
 
   const token = authHeader.split(" ")[1];
   const secretKey = process.env.JWT_SECRET;
-  console.log("Rapaiz")
-
 
   try {
     if (token == DOOR_KEY){

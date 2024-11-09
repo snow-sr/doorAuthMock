@@ -8,7 +8,6 @@ const prisma = new PrismaClient();
 router = new express.Router();
 
 router.post("/", async (req, res) => {
-  console.log("Recebendo requisição para criar log...");
   const { type, message } = req.body;
   let logdps; 
   if (!type || !message) {
@@ -26,9 +25,9 @@ router.post("/", async (req, res) => {
      if (!log) {
        return res.status(400).json({ error: "Error creating log" });
      }
+     logdps = log
      res.status(200).json({ message: "Log created" });
      
-     logdps = log
   } catch (error) {
     res.status(400).json({ error: error.message });
   } finally {

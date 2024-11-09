@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { DOOR_KEY } = require("../../config");
-const logger = require("../logger/logger");
+
 
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -12,8 +12,6 @@ const verifyToken = (req, res, next) => {
 
   const token = authHeader.split(" ")[1];
   const secretKey = process.env.JWT_SECRET;
-  console.log("Rapaiz")
-
 
   try {
     if (token == DOOR_KEY){

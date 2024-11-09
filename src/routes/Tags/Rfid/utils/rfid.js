@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 const { logger } = require("../../../../middlewares");
 const { dateFormat } = require("../../../../helpers/date/date");
 const NodeCache = require("node-cache");
-const cache = new NodeCache({ stdTTL: 864000, checkperiod: 320 }); 
+const cache = new NodeCache({ stdTTL: 864000, checkperiod: 3600 }); 
 
 // Custom Error Classes
 class ValidationError extends Error {
@@ -30,7 +30,6 @@ async function validateRfid(rfid) {
  
     const cachedTags = cache.get(cacheKey);
    if (cachedTags) {
-    console.log("pasou")
      const cachedTag = cachedTags.find((tag) => tag.rfid == rfid);
      if (cachedTag) {
        return cachedTag.valid;

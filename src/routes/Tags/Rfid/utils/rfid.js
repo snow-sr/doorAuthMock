@@ -29,13 +29,14 @@ async function validateRfid(rfid) {
     const cacheKey = `tag_rfid`;
  
     const cachedTags = cache.get(cacheKey);
-    console.log(cache.keys())
-    console.log(cachedTags)
    if (cachedTags) {
-     const cachedTag = cachedTags.find((tag) => tag.rfid === rfid);
+    console.log("pasou")
+     const cachedTag = cachedTags.find((tag) => tag.rfid == rfid);
      if (cachedTag) {
-       console.log("passou");
        return cachedTag.valid;
+     }
+     else{
+       return false
      }
    }
 
@@ -49,8 +50,12 @@ async function validateRfid(rfid) {
 
     cache.set(cacheKey, tagsToCache);
 
-    const tag = tags.find((tag) => tag.rfid === rfid);
-    return tag.valid;
+    
+    console.log("passou")
+    const tag = tags.find((tag) => tag.rfid == rfid);
+    if (tag) {
+      return tag.valid;
+    }
   } catch (error) {
     return new Error(`Validation failed: ${error.message}`);
   } finally {

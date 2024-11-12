@@ -15,6 +15,7 @@ router.post("/", async (req, res) => {
   }
 
   try {
+      res.status(200).json({ message: "Log created" });
      const log = await prisma.logs.create({
        data: {
          type,
@@ -26,7 +27,6 @@ router.post("/", async (req, res) => {
        return res.status(400).json({ error: "Error creating log" });
      }
      logdps = log
-     res.status(200).json({ message: "Log created" });
      
   } catch (error) {
     res.status(400).json({ error: error.message });

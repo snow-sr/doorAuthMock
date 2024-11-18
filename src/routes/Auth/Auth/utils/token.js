@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
 
-const { SECRET_KEY } = require("../../../../config");
+const { JWT_SECRET } = require("../../../../config");
 
 function verifyToken(token) {
   try {
-    const decoded = jwt.verify(token, SECRET_KEY);
+    const decoded = jwt.verify(token, JWT_SECRET);
     return decoded;
   } catch (error) {
     return { error: error.message };
@@ -12,11 +12,13 @@ function verifyToken(token) {
   }
 
 const generateToken = ((userId) => {
-  return jwt.sign({ userId }, SECRET_KEY, { expiresIn: '3h' }); 
+  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: "3h" }); 
 })
 
 const generatePasswordResetToken = ((userId) => {
-  const token = (jwt.sign({ userId }, SECRET_KEY, { expiresIn: "5m" })).slice(0, 10); 
+  const token = jwt
+    .sign({ userId }, JWT_SECRET, { expiresIn: "5m" })
+    .slice(0, 10); 
   return token
 })
 

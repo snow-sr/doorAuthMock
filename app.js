@@ -21,28 +21,31 @@ const io = new Server(server, {
 
 
 app.use(express.json())
-// app.use(
-//   helmet({
-//     contentSecurityPolicy: {
-//         directives: {
-//           defaultSrc: ['self'],
-//           scriptSrc: ['self'],
-//           styleSrc: ['self'],
-//           objectSrc: ['none'],
-//           upgradeInsecureRequests: [],
-//         },
-//       },
-//       dnsPrefetchControl: {allow: false},
-//       expectCt: {enforce: true},
-//       frameguard: {action: 'deny'},
-//       hidePoweredBy: {setTo: 'PHP 4.2.0'},
-//       hsts: {maxAge: 5184000, preload: true},
-//       ieNoOpen: {setTo: 'false'},
-//       noSniff: true,
-//       referrerPolicy: {policy: 'strict-origin-when-cross-origin'},
-//       xssFilter: true,
-//     }),
-// );
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      //////////////////////////// REVISAR ESSAS CONFIGURAÇÕES
+      directives: {
+        "default-src": ["'self'"], // apenas recursos locais e de mesmas origens
+        "script-src": ["'self'", "http://191.*"], // permite scripts de IPs que começam com 191
+        "style-src": ["'self'", "http://191.*"], // permite estilos de IPs que começam com 191
+        "connect-src": ["'self'", "http://191.*"], // permite conexões com IPs que começam com 191
+        "object-src": ["'none'"],
+        "upgrade-insecure-requests": [],
+      },
+      ////////////////////////////
+    },
+    dnsPrefetchControl: { allow: false },
+    expectCt: { enforce: true },
+    frameguard: { action: "deny" },
+    hidePoweredBy: { setTo: "PHP 4.2.0" },
+    hsts: { maxAge: 5184000, preload: true },
+    ieNoOpen: false,
+    noSniff: true,
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+    xssFilter: true,
+  })
+);
 
 app.use(cors());
 app.use(pinoHttp);

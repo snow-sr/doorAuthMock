@@ -15,9 +15,13 @@ router.post("/health", async (req, res) => {
 
 router.post("/ip", async (req, res) => {
     const { ip } = req.body;
+
+    if (!ip) {
+        return res.status(400).json({ error: "Ip is required" });
+    }
     try {
-        const ipResponse = await checkIp(ip);
-        res.status(200).json({ message: "Ip saved", ip: ipResponse });
+        res.status(200).json({ message: "Ip saved"});
+        await checkIp(ip);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

@@ -39,4 +39,26 @@ router.post("/alive", async (req, res ) => {
     }
 })
 
+router.get("/mode", async (req, res) => {
+    try{
+        const ip = getIp();
+        const { isVerify, isSuper } = await verifyUser.verifyUser(req.user);
+        if (!isVerify || !isSuper) {
+          res.status(403).json({ error: "User no have permision" });
+        } else if (!ip) {
+          res.status(500).json({ error: "Ip not found" });
+        }
+        const response = await axios.get(ip + ":19003//toggle-mode", {
+          headers: { Authorization: "Bearer " + DOOR_KEY },
+        });
+        res.status(200).json(response.data);
+    }
+    catch(error){
+        res.status(400).json({ error: error.message });
+    }
+    finally{
+        logger.info("Door mode requested");
+    }
+});
+
 module.exports = router;

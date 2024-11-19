@@ -19,5 +19,5 @@ jobs:
       - name: Push to dokku
         uses: dokku/github-action@master
         with:
-          git_remote_url: "ssh://dokku@app1.fabricadesoftware.ifc.edu.br:1022/door"
+          git_remote_url: "ssh://dokku@app1.fabricadesoftware.ifc.edu.br:1022/Door-api"
           ssh_private_key: ${{ secrets.GHACTIONS_SSH }}

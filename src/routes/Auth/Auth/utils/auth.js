@@ -121,7 +121,7 @@ async function verifyUser(userData) {
 
     return userToCache;
   } catch (error) {
-    throw new Error(`Verification failed: ${error.message}`);
+    return new Error(`Verification failed: ${error.message}`);
   } finally {
     await prisma.$disconnect();
   }

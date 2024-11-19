@@ -17,7 +17,7 @@ const limiter = RateLimit({
 });
 
 app.use("/auth", auth);
-app.use("/logs", logs);
+app.use("/logs", verifyToken, logs);
 app.use("/health", health);
 
 app.use("/tags", limiter, verifyToken, tags);

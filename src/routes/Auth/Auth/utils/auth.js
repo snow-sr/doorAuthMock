@@ -121,7 +121,7 @@ async function verifyUser(userData) {
 
     return userToCache;
   } catch (error) {
-    throw new Error(`Verification failed: ${error.message}`);
+    return new Error(`Verification failed: ${error.message}`);
   } finally {
     await prisma.$disconnect();
   }
@@ -153,7 +153,7 @@ async function forgetPassword(email) {
     const mail = await emailForgetPassword(token, [email]);
     return { mail, update };
   } catch (error) {
-    throw new Error(`Password reset failed: ${error.message}`);
+    return new Error(`Password reset failed: ${error.message}`);
   } finally {
     await prisma.$disconnect();
   }

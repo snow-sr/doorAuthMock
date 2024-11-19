@@ -1,5 +1,5 @@
 const express = require("express");
-const verifyToken = require("./middlewares/auth/auth");
+const verifyToken = require("./middlewares/");
 const RateLimit = require("express-rate-limit");
 
 const app = express();

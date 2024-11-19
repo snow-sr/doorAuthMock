@@ -54,7 +54,7 @@ async function registerUser(email, password, name) {
     });
     return user;
   } catch (error) {
-    throw new Error(`Registration failed: ${error.message}`);
+    return new Error(`Registration failed: ${error.message}`);
   } finally {
     await prisma.$disconnect();
   }

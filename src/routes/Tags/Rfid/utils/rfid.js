@@ -1,70 +1,57 @@
 const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
-const { logger } = require("../../../../middlewares");
-const { dateFormat } = require("../../../../helpers/date/date");
 const NodeCache = require("node-cache");
-const cache = new NodeCache({ stdTTL: 864000, checkperiod: 3600 }); 
 
-// Custom Error Classes
-class ValidationError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "ValidationError";
-  }
-}
+const { logger } = require("../../../../middlewares");
+const {
+  dateFormat,
+  NotFoundError,
+  ValidationError,
+} = require("../../../../helpers/");
 
-class NotFoundError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "NotFoundError";
-  }
-}
+const cache = new NodeCache({ stdTTL: 864000, checkperiod: 3600 });
+const prisma = new PrismaClient();
 
 async function validateRfid(rfid) {
   if (!rfid) {
-    throw new ValidationError("RFID is required");
+    return new ValidationError("RFID is required");
   }
 
   try {
     const cacheKey = `tag_rfid`;
- 
+
     const cachedTags = cache.get(cacheKey);
-   if (cachedTags) {
-     const cachedTag = cachedTags.find((tag) => tag.rfid == rfid);
-     if (cachedTag) {
-       return cachedTag.valid;
-     }
-     else{
-       return false
-     }
-   }
+    if (cachedTags) {
+      const cachedTag = cachedTags.find((tag) => tag.rfid == rfid);
+      if (cachedTag) {
+        return cachedTag.valid;
+      } else {
+        return false;
+      }
+    }
 
     const tags = await prisma.rfidTag.findMany();
 
-    if(!tags){
-      throw new NotFoundError("RFIDS not found");
+    if (!tags) {
+      return new NotFoundError("RFIDS not found");
     }
 
-    const tagsToCache = tags
+    const tagsToCache = tags;
 
     cache.set(cacheKey, tagsToCache);
 
-    
-    console.log("passou")
+    console.log("passou");
     const tag = tags.find((tag) => tag.rfid == rfid);
     if (tag) {
       return tag.valid;
     }
   } catch (error) {
     return new Error(`Validation failed: ${error.message}`);
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
 async function createRfid(rfid) {
   if (!rfid) {
-    throw new ValidationError("RFID is required");
+    return new ValidationError("RFID is required");
   }
 
   try {
@@ -72,16 +59,13 @@ async function createRfid(rfid) {
     logger.info("RFID created successfully");
     return newRfid;
   } catch (error) {
-    throw new Error(`Creation failed: ${error.message}`);
-  } finally {
-    await prisma.$disconnect();
+    return new Error(`Creation failed: ${error.message}`);
   }
 }
-  
 
 async function removeRfid(id) {
   if (!id) {
-    throw new ValidationError("RFID is required");
+    return new ValidationError("RFID is required");
   }
 
   try {
@@ -89,9 +73,7 @@ async function removeRfid(id) {
     logger.info("RFID removed successfully");
     return removedRfid;
   } catch (error) {
-    throw new Error(`Removal failed: ${error.message}`);
-  } finally {
-    await prisma.$disconnect();
+    return new Error(`Removal failed: ${error.message}`);
   }
 }
 
@@ -104,22 +86,20 @@ async function getAllRfids() {
       rfid.created_at = dateFormat(rfid.created_at);
       rfid.last_time_used = dateFormat(rfid.last_time_used);
       rfid.updated_at = dateFormat(rfid.updated_at);
-      if (rfid?.user){
+      if (rfid?.user) {
         delete rfid.user.password;
       }
     });
     logger.info("Retrieved all RFIDs successfully");
     return rfids;
   } catch (error) {
-    throw new Error(`Failed to retrieve RFIDs: ${error.message}`);
-  } finally {
-    await prisma.$disconnect();
+    return new Error(`Failed to retrieve RFIDs: ${error.message}`);
   }
 }
 
 async function assignRfidToUser(rfid, userId) {
   if (!rfid || !userId) {
-    throw new ValidationError("RFID and User ID are required");
+    return new ValidationError("RFID and User ID are required");
   }
 
   try {
@@ -139,15 +119,13 @@ async function assignRfidToUser(rfid, userId) {
     logger.info("RFID assigned to user successfully");
     return updatedUser;
   } catch (error) {
-    throw new Error(`Failed to assign RFID: ${error.message}`);
-  } finally {
-    await prisma.$disconnect();
+    return new Error(`Failed to assign RFID: ${error.message}`);
   }
 }
 
 async function desAssignRfidToUser(rfid, userId) {
   if (!rfid || !userId) {
-    throw new ValidationError("RFID and User ID are required");
+    return new ValidationError("RFID and User ID are required");
   }
 
   try {
@@ -167,31 +145,43 @@ async function desAssignRfidToUser(rfid, userId) {
     logger.info("RFID desassigned to user successfully");
     return updatedUser;
   } catch (error) {
-    throw new Error(`Failed to desassign RFID: ${error.message}`);
-  } finally {
-    await prisma.$disconnect();
+    return new Error(`Failed to desassign RFID: ${error.message}`);
   }
 }
 
 async function permissionRfid(rfid) {
   if (!rfid === undefined) {
-    throw new ValidationError("RFID and valid are required");
+    return new ValidationError("RFID and valid are required");
   }
 
   try {
-    console.log(rfid + ' dsadadAfgfuifWGFWFHEWQF')
     const tag = await prisma.rfidTag.findUnique({ where: { id: rfid } });
     const updatedRfid = await prisma.rfidTag.update({
       where: { id: rfid },
       data: { valid: !tag.valid },
     });
 
-    logger.info("RFID permission updated successfully");
     return updatedRfid;
   } catch (error) {
-    throw new Error(`Failed to update RFID permission: ${error.message}`);
-  } finally {
-    await prisma.$disconnect();
+    return new Error(`Failed to update RFID permission: ${error.message}`);
+  }
+}
+
+async function getRfid(rfid) {
+  if (!rfid) {
+    return new ValidationError("RFID is required");
+  }
+
+  try {
+    const tag = await prisma.rfidTag.findUnique({ where: { rfid } });
+
+    if (!tag) {
+      return new NotFoundError("RFID not found");
+    }
+
+    return tag;
+  } catch (error) {
+    return new Error(`Failed to get RFID: ${error.message}`);
   }
 }
 
@@ -203,4 +193,5 @@ module.exports = {
   permissionRfid,
   desAssignRfidToUser,
   createRfid,
+  getRfid,
 };

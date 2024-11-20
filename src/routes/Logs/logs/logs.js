@@ -1,11 +1,24 @@
 const express = require("express");
 const { PrismaClient } = require("@prisma/client");
-const { dateFormat } = require("../../../helpers/date/date");
-const logger = require("../../../middlewares/logger/logger");
+
+const { dateFormat } = require("../../../helpers/");
 const io = require("../../../../app");
 
 const prisma = new PrismaClient();
+
 router = new express.Router();
+
+router.get("/", async (req, res) => {
+  try {
+    const logs = await prisma.logs.findMany();
+    logs.forEach((log) => {
+      log.date = dateFormat(log.date);
+    });
+    res.status(200).json({ success: true, data: logs });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  } 
+});
 
 router.post("/", async (req, res) => {
   let { type, message } = req.body;
@@ -16,9 +29,8 @@ router.post("/", async (req, res) => {
   if (message !== String){
     message = JSON.stringify(message)
   }
-  console.log(message)
   // Enviar a resposta imediatamente
-  res.status(200).json({ message: "Log is being processed" });
+  res.status(200).json({ success: true, message: "Log is being processed" });
 
   // Processar a criação do log e emitir evento de forma assíncrona
   try {
@@ -37,18 +49,6 @@ router.post("/", async (req, res) => {
 });
 
 
-router.get("/", async (req, res) => {
-  try {
-    const logs = await prisma.logs.findMany();
-    logs.forEach((log) => {
-      log.date = dateFormat(log.date);
-    });
-    res.status(200).json({ data: logs });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  } finally {
-    await prisma.$disconnect();
-  }
-});
+
 
 module.exports = router;

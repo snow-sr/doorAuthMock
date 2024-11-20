@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const { getAllUsers, getUserById, deleteUser, updateUser} = require("./utils/user");
 const { logger } = require("../../../middlewares");
-const { verifyUser } = require("../../Auth/Auth/utils/auth");
+const { verifyUser } = require("../../auth/auth/utils/auth");
 
 const router = new express.Router();
 

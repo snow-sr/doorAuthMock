@@ -1,4 +1,4 @@
-const tags = require('./Rfid/rfid');
+const tags = require('./rfid/rfid');
 
 module.exports = {
     tags

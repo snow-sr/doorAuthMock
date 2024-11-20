@@ -9,7 +9,7 @@ const {
   createRfid,
 } = require("./utils/rfid");
 const validateRequestBody = require("../../../helpers/validate/fields");
-const verifyUser = require("../../Auth/Auth/utils/auth");
+const verifyUser = require("../../auth/auth/utils/auth");
 const logger = require("../../../middlewares/logger/logger");
 
 const router = new express.Router();

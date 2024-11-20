@@ -1,24 +1,14 @@
 const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const NodeCache = require("node-cache");
+
 const { logger } = require("../../../../middlewares");
 const { dateFormat } = require("../../../../helpers/date/date");
-const NodeCache = require("node-cache");
+
 const cache = new NodeCache({ stdTTL: 864000, checkperiod: 3600 }); 
+const prisma = new PrismaClient();
 
-// Custom Error Classes
-class ValidationError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "ValidationError";
-  }
-}
 
-class NotFoundError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "NotFoundError";
-  }
-}
+
 
 async function validateRfid(rfid) {
   if (!rfid) {

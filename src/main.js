@@ -1,14 +1,14 @@
 const express = require("express");
-const verifyToken = require("./middlewares/auth/auth");
+const { verifyToken } = require("./middlewares/");
 const RateLimit = require("express-rate-limit");
 
 const app = express();
 
-const { auth } = require("./routes/Auth");
-const { tags } = require("./routes/Tags");
+const { auth } = require("./routes/auth");
+const { tags } = require("./routes/tags");
 const { door } = require("./routes/door");
 const { user } = require("./routes/user");
-const { logs } = require("./routes/Logs");
+const { logs } = require("./routes/logs");
 const { health } = require("./routes/health");
 
 const limiter = RateLimit({

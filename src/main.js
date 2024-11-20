@@ -13,7 +13,7 @@ const { health } = require("./routes/health");
 
 const limiter = RateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 150, // max 100 requests per windowMs
+  max: 150, // max 150 requests per windowMs
 });
 
 app.use("/auth", auth);

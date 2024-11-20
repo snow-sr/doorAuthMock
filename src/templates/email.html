@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Recovery</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0;">
+    <div style="max-width: 600px; margin: 20px auto; background: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+        <h2 style="color: #333; text-align: center;">Password Recovery</h2>
+        <p style="color: #555;">Hello,</p>
+        <p style="color: #555;">You requested to reset your password. Here is your new temporary password:</p>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <input type="text" value="${password}" readonly 
+                   style="padding: 10px; font-size: 18px; border: 1px solid #ccc; border-radius: 5px; width: 80%; text-align: center; cursor: pointer;" 
+                   onclick="this.select(); document.execCommand('copy');">
+          </div>
+
+        <p style="color: #555;">Highlight the password above to copy it. Use it to log in and make sure to change your password afterward for security reasons.</p>
+
+        <p style="font-size: 12px; color: #999; text-align: center;">This is an automated message. Please do not reply.</p>
+    </div>
+</body>
+</html>

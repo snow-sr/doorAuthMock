@@ -23,6 +23,13 @@ async function validateRfid(rfid) {
     if (cachedTags) {
       const cachedTag = cachedTags.find((tag) => tag.rfid == rfid);
       if (cachedTag) {
+        await prisma.rfidTag.update({
+          where: { id: cachedTag.id },
+          data: {
+            last_time_used: new Date(),
+            used_times: cachedTag.used_times + 1,
+          },
+        });
         return cachedTag.valid;
       } else {
         return false;
@@ -39,9 +46,12 @@ async function validateRfid(rfid) {
 
     cache.set(cacheKey, tagsToCache);
 
-    console.log("passou");
     const tag = tags.find((tag) => tag.rfid == rfid);
     if (tag) {
+      await prisma.rfidTag.update({
+        where: { id: tag.id },
+        data: { last_time_used: new Date(), used_times: tag.used_times + 1 },
+      });
       return tag.valid;
     }
   } catch (error) {

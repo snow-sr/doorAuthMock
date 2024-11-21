@@ -12,8 +12,8 @@ const { logs } = require("./routes/logs");
 const { health } = require("./routes/health");
 
 const limiter = RateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 150, // max 150 requests per windowMs
+  windowMs: 5 * 60 * 1000, // 15 minutes
+  max: 250, // max 150 requests per windowMs
 });
 
 app.use("/auth", auth);

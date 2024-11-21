@@ -29,10 +29,8 @@ router.post("/", async (req, res) => {
   if (message !== String){
     message = JSON.stringify(message)
   }
-  // Enviar a resposta imediatamente
   res.status(200).json({ success: true, message: "Log is being processed" });
 
-  // Processar a criação do log e emitir evento de forma assíncrona
   try {
     const log = await prisma.logs.create({
       data: {
@@ -41,7 +39,6 @@ router.post("/", async (req, res) => {
       },
     });
 
-    // Emitir evento WebSocket após salvar no banco
     io.io.emit("logs", { data: log });
   } catch (error) {
     console.error("Erro ao processar log:", error.message);
